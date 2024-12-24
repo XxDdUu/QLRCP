@@ -3,30 +3,31 @@ create database Movie;
 use Movie;
 
 create table User (
-ID				int auto_increment,
-Username		nvarchar(100) not null,
-Usermail		nvarchar(100) not null,
-UserPassword	nvarchar(100) not null,
-constraint pk_User	primary key(ID)
+ID_User				int auto_increment,
+User_name		nvarchar(100) not null,
+User_mail		nvarchar(100) not null,
+User_Password	nvarchar(100) not null,
+constraint pk_User	primary key(ID_User)
 );
 
 create table Staff (
-IDSTAFF			int auto_increment,
-StaffName		nvarchar(100) not null,
-StaffMail		nvarchar(100) not null,
-StaffPass		nvarchar(100) not null,
-constraint pk_Staff	primary key(IDSTAFF)
+ID_Staff		int auto_increment,
+Staff_Name		nvarchar(100) not null,
+Staff_Mail		nvarchar(100) not null,
+Staff_Pass		nvarchar(100) not null,
+IDCinema		int not null,
+constraint pk_Staff	primary key(ID_Staff)
 );
 
 create table Movie (
 IDMovie			int auto_increment,
-Title			nvarchar(255),
-Genre			nvarchar(100),
-Duration		int,
-Director		nvarchar(255),
-release_date	date,
-Moviedescrip	text,
-main_cast		text,
+Title			nvarchar(255) not null,
+Genre			nvarchar(100) not null,
+Duration		int not null,
+Director		nvarchar(255) not null,
+release_date	date ,
+Moviedescrip	text not null,
+main_cast		text not null,
 create_at timestamp default CURRENT_TIMESTAMP,
 update_at timestamp default current_timestamp on update current_timestamp,
 constraint pk_Movie primary key (IDMovie)
@@ -34,8 +35,8 @@ constraint pk_Movie primary key (IDMovie)
 
 create table Cinema (
 IDCinema		int auto_increment,
-CinemaName		nvarchar(255),
-Adress			nvarchar(255),
+CinemaName		nvarchar(255) not null,
+Adress			nvarchar(255) not null,
 PhoneNumber		int check (PhoneNumber < 11),
 constraint pk_Cinema primary key (IDCinema)
 );
@@ -76,6 +77,33 @@ constraint fk_Schedule_Ticket foreign key (IDSchedule) references Schedule(IDSch
 constraint fk_Seat_Ticket foreign key (IDSeat) references Seat(IDSeat) on delete cascade on update cascade
 );
 
+create table Seat (
+IDSeat      int auto_increment,
+IDRoom      int not null,
+SeatRow     char(1) not null, -- Hàng ghế (A, B, C, ...)
+SeatNumber  int not null,     -- Số ghế trong hàng
+Status      enum('Available', 'Booked', 'Broken') default 'Available',
+create_at   timestamp default CURRENT_TIMESTAMP,
+update_at   timestamp default current_timestamp on update current_timestamp,
+constraint pk_Seat primary key (IDSeat),
+constraint fk_Room_Seat foreign key (IDRoom) references Room(IDRoom) on delete cascade
+);
 
-alter table Room add constraint fk_Cinema_Room foreign key (IDCinema) references Cinema(IDCinema);
+alter table User add column Role enum('Customer', 'Admin') default 'Customer';
+
+alter table Ticket add column ID_User int not null;
+alter table Ticket add constraint fk_User_Ticket foreign key (ID_User) references User(ID_User) on delete cascade;
+
+alter table Room add constraint fk_Cinema_Room foreign key (IDCinema) references Cinema(IDCinema) on delete cascade on update cascade;
 alter table Schedule add constraint fk_Schedule_Room foreign key(IDRoom) references Room(IDRoom) on delete cascade on update cascade;
+
+alter table Cinema modify PhoneNumber varchar(15) not null check (PhoneNumber regexp '^[0-9]{10,15}$');
+
+alter table Staff add constraint fk_Staff_Cinema foreign key (IDCinema) references Cinema(IDCinema) on delete cascade;
+
+alter table Ticket add column ID_Staff int;
+alter table Ticket add constraint fk_Staff_Ticket foreign key (ID_Staff) references Staff(ID_Staff) on delete set null;
+
+alter table Schedule add column ID_Staff int;
+alter table Schedule add constraint fk_Schedule_Staff foreign key (ID_Staff) references Staff(ID_STAFF) on delete set null;
+
