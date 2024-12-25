@@ -3,15 +3,21 @@ create database Movie;
 use Movie;
 
 -- tao bang User_System // luu tru mail va password nguoi dung
+-- create table User_System(
+-- Username				nvarchar(100) not null unique,
+-- Usermail				nvarchar(100) not null unique,
+-- UserPassword			nvarchar(100) not null,
+-- UserRole				enum('Customer', 'Admin', 'Staff') Default 'Customer',
+-- IDCustomer				int,
+-- IDStaff					int
+-- );	
 create table User_System(
 Username				nvarchar(100) not null unique,
-Usermail				nvarchar(100) not null unique,
 UserPassword			nvarchar(100) not null,
-UserRole				enum('Customer', 'Admin', 'Staff') Default 'Customer',
+UserRole				nvarchar(10) CHECK (UserRole IN ('Customer', 'Admin', 'Staff')) Default 'Customer',
 IDCustomer				int,
 IDStaff					int
 );	
-
 -- khoa ngoai cua bang User_System
 alter table User_System add constraint fk_User_Customer foreign key (IDCustomer) references Customer(IDCustomer) on delete cascade on update cascade;
 alter table User_System add constraint fl_User_Staff foreign key (IDStaff) references Staff(IDStaff) on delete cascade on update cascade;
