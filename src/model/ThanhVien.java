@@ -3,13 +3,13 @@ package model;
 public class ThanhVien {
 	private String MATv;
 	private String HoTen;
-	private String GioiTinh;
+	private String email;
 	private String LoaiDoiTuong;
-	public ThanhVien(String mATv, String hoTen, String gioiTinh, String loaiDoiTuong) {
+	public ThanhVien(String mATv, String hoTen, String email, String loaiDoiTuong) {
 		super();
 		MATv = mATv;
 		HoTen = hoTen;
-		GioiTinh = gioiTinh;
+		email = email;
 		LoaiDoiTuong = loaiDoiTuong;
 	}
 	public String getMATv() {
@@ -24,11 +24,11 @@ public class ThanhVien {
 	public void setHoTen(String hoTen) {
 		HoTen = hoTen;
 	}
-	public String getGioiTinh() {
-		return GioiTinh;
+	public String getemail() {
+		return email;
 	}
-	public void setGioiTinh(String gioiTinh) {
-		GioiTinh = gioiTinh;
+	public void setemail(String email) {
+		email = email;
 	}
 	public String getLoaiDoiTuong() {
 		return LoaiDoiTuong;
@@ -36,4 +36,5 @@ public class ThanhVien {
 	public void setLoaiDoiTuong(String loaiDoiTuong) {
 		LoaiDoiTuong = loaiDoiTuong;
 	}
+	
 }
