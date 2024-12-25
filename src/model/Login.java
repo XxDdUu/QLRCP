@@ -1,23 +1,21 @@
 package model;
 
 public class Login {
-	    private String gmail;
+	    private String username;
 	    private String password;
-	    private ThanhVien user;
 
-	    public Login(String gmail, ThanhVien user, String password) {
-	        this.gmail = gmail;
-	        this.user = user;
+	    public Login(String username, String password) {
+	        this.username = username;
 	        this.password = password;
 	    }
 
 
-	    public String getGmail() {
-	        return gmail;
+	    public String getusername() {
+	        return username;
 	    }
 
-	    public void setGmail(String gmail) {
-	        this.gmail = gmail;
+	    public void setusername(String username) {
+	        this.username = username;
 	    }
 
 	    public String getPassword() {
@@ -27,16 +25,5 @@ public class Login {
 	    public void setPassword(String password) {
 	        this.password = password;
 	    }
-
-	    public ThanhVien getUser() {
-	        return user;
-	    }
-
-	    public void setThanhVien(ThanhVien user) {
-	        this.user = user;
-	    }
-
-
 	}
 
-}
