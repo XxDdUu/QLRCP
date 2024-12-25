@@ -2,22 +2,28 @@ create database Movie;
 
 use Movie;
 
-create table Customer(
-ID				int IDENTITY(1,1),
+create table User_System(
 Username		nvarchar(100) not null,
 Usermail		nvarchar(100) not null,
 UserPassword	nvarchar(100) not null,
-UserType		nvarchar(14) CHECK (UserType IN ('Nguoi lon', 'Tre em')) Default ('Nguoi lon')
-constraint pk_User	primary key(ID)
+UserRole		varchar(8) CHECK (UserRole IN ('Customer', 'Admin')) Default 'Customer'
 );
+
+create table Customer(
+IDCustomer		int IDENTITY(1,1),
+CustomerName	nvarchar(100) not null,
+CustomerPhoneNumber		nvarchar(100),
+CustomerType		nvarchar(14) CHECK (CustomerType IN ('Nguoi lon', 'Tre em')) Default ('Nguoi lon')
+constraint pk_User	primary key(IDCustomer)
+);
+
 
 create table Staff (
 ID_Staff		int auto_increment,
 Staff_Name		nvarchar(100) not null,
 Staff_Mail		nvarchar(100) not null,
-Staff_Pass		nvarchar(100) not null,
 IDCinema		int not null,
-constraint pk_Staff	primary key(ID_Staff)
+constraint pk_Staff	primary key (ID_Staff)
 );
 
 create table Movie (
