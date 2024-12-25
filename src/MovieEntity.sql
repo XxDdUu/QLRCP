@@ -2,12 +2,13 @@ create database Movie;
 
 use Movie;
 
-create table User (
-ID_User				int auto_increment,
-User_name		nvarchar(100) not null,
-User_mail		nvarchar(100) not null,
-User_Password	nvarchar(100) not null,
-constraint pk_User	primary key(ID_User)
+create table Customer(
+ID				int IDENTITY(1,1),
+Username		nvarchar(100) not null,
+Usermail		nvarchar(100) not null,
+UserPassword	nvarchar(100) not null,
+UserType		nvarchar(14) CHECK (UserType IN ('Nguoi lon', 'Tre em')) Default ('Nguoi lon')
+constraint pk_User	primary key(ID)
 );
 
 create table Staff (
