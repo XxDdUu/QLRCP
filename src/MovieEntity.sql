@@ -2,20 +2,6 @@ create database Movie;
 
 use Movie;
 
--- tao bang User_System // luu tru mail va password nguoi dung
-create table User_System(
-Username				nvarchar(100) not null unique,
-UserPassword			nvarchar(100) not null,
-UserRole				enum('Customer', 'Admin', 'Staff') Default 'Customer',
-IDCustomer				int,
-IDStaff					int
-);	
-
--- khoa ngoai cua bang User_System
-alter table User_System add constraint fk_User_Customer foreign key (IDCustomer) references Customer(IDCustomer) on delete cascade on update cascade;
-alter table User_System add constraint fl_User_Staff foreign key (IDStaff) references Staff(IDStaff) on delete cascade on update cascade;
-
-
 -- tao bang customer
 create table Customer(
 IDCustomer				int auto_increment,
@@ -87,8 +73,6 @@ constraint pk_Schedule primary key (IDSchedule)
 );
 
 
-
-
 create table Ticket (
 IDTicket			int auto_increment,
 IDSchedule			int not null,
@@ -99,7 +83,6 @@ IDCustomer 			int not null,
 IDStaff 			int not null,
 constraint pk_Ticket primary key (IDTicket)
 );
-
 
 
 create table Seat (
@@ -113,10 +96,3 @@ update_at 		 timestamp default current_timestamp on update current_timestamp,
 constraint pk_Seat primary key (IDSeat)
 );
 
-insert into Staff(Staff_Name,Staff_Mail, IDCinema ) values ('Bach', 'bachnd2006@outlook.com', '1'), ('Duy', 'Duy2006@gmail.com', '1'), ('Tuat', 'Tuat06.24ai@vku.udn.vn', '1');
-select * from Staff;
-
-select * from Movie;
-insert into Movie(Title, Genre, Duration, Director, release_date, Moviedescrip) values ('Avenger: Endgame', 'Sci-fi', '181', 'Anthony Russo', '2019-4-26', 'Sau cu bung tay cua thanos...');
-
-insert into Cinema(IDCinema, CinemaName, Adress, PhoneNumber) values ('1', 'CGV', 'Vincom Ngo Quyen', '0123456789');
