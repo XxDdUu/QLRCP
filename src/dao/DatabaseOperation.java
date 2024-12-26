@@ -28,4 +28,17 @@ public class DatabaseOperation {
 		}
 		return rowAffected;
 	}
+	public ResultSet executeQuery(String sql, Object[] values) {
+        try {
+            Connection connection = connectToDataBase();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            for (int i = 0; i < values.length; i++) {
+                preparedStatement.setObject(i + 1, values[i]);
+            }
+            return preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to execute query: " + e.getMessage());
+        }
+    }
 }
