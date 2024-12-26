@@ -2,6 +2,11 @@ package dao;
 
 import java.util.List;
 
+import model.LICHCHIEU;
+import model.Ve;
+import model.ThanhVien;
+import model.LICHCHIEU;
+import model.Phim;
 public class NHANVIENDAOImpl implements NHANVIENDAO {
 	public List<Ve> getAllTickets() {
 		return null;
@@ -15,7 +20,7 @@ public class NHANVIENDAOImpl implements NHANVIENDAO {
 		return null;
 	}
 
-	public List<LichChieu> getMovieSchedules() {
+	public List<LICHCHIEU> getMovieSchedules() {
 		return null;
 	}
 
