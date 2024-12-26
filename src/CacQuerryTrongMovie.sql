@@ -1,9 +1,5 @@
 use Movie;
 
--- khoa ngoai cua table User_System
-alter table User_System add constraint fk_User_Customer foreign key (IDCustomer) references Customer(IDCustomer) on delete cascade on update cascade;
-alter table User_System add constraint fl_User_Staff foreign key (IDStaff) references Staff(IDStaff) on delete cascade on update cascade;
-
 -- khoa ngoai cua table Staff
 alter table Staff add constraint fk_Staff_Cinema foreign key (IDCinema) references Cinema(IDCinema) on delete cascade on update cascade;
 
@@ -23,10 +19,6 @@ alter table Ticket add constraint fk_Staff_Ticket foreign key (IDStaff) referenc
 -- khoa ngoai cua table Seat
 alter table Seat add constraint fk_Room_Seat foreign key (IDRoom) references Room(IDRoom) on delete cascade on update cascade;
 
--- insert du lieu mau cho table User_System
-insert into User_System(Username, UserPassword, UserRole) values ('Bach', 'Bachnguyen54', 'Staff'),
- ('Duy','Duy123432', 'Staff'), ('Thong','Thong098765', 'Customer'), ('Tuat','Tuat999999', 'Admin');
- select * from User_System;
 
 -- insert du lieu mau cho table Customer
 insert into Customer(CustomerName, CustomerPhoneNumber, CustomerType) values ('Duong', '0905040302', 'Nguoi Lon'), ('Hai', '0847576756', 'Tre em');
