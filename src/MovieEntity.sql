@@ -3,21 +3,14 @@ create database Movie;
 use Movie;
 
 -- tao bang User_System // luu tru mail va password nguoi dung
--- create table User_System(
--- Username				nvarchar(100) not null unique,
--- Usermail				nvarchar(100) not null unique,
--- UserPassword			nvarchar(100) not null,
--- UserRole				enum('Customer', 'Admin', 'Staff') Default 'Customer',
--- IDCustomer				int,
--- IDStaff					int
--- );	
 create table User_System(
 Username				nvarchar(100) not null unique,
 UserPassword			nvarchar(100) not null,
-UserRole				nvarchar(10) CHECK (UserRole IN ('Customer', 'Admin', 'Staff')) Default 'Customer',
+UserRole				enum('Customer', 'Admin', 'Staff') Default 'Customer',
 IDCustomer				int,
 IDStaff					int
 );	
+
 -- khoa ngoai cua bang User_System
 alter table User_System add constraint fk_User_Customer foreign key (IDCustomer) references Customer(IDCustomer) on delete cascade on update cascade;
 alter table User_System add constraint fl_User_Staff foreign key (IDStaff) references Staff(IDStaff) on delete cascade on update cascade;
@@ -38,8 +31,7 @@ IDStaff					int auto_increment,
 Staff_Name				nvarchar(100) not null,
 Staff_Mail				nvarchar(100) not null,
 IDCinema				int not null,
-constraint pk_Staff	primary key (IDStaff),
-constraint fk_Staff_Cinema foreign key (IDCinema) references Cinema(IDCinema) on delete cascade
+constraint pk_Staff	primary key (IDStaff)
 );
 
 
@@ -77,8 +69,7 @@ capacity			int not null,	-- Suc chua cua phong
 Status 				enum('Con trong', 'Het cho') default 'Con trong',
 create_at timestamp default CURRENT_TIMESTAMP,
 update_at timestamp default current_timestamp on update current_timestamp,
-constraint pk_Room primary key (IDRoom),
-constraint fk_Cinema_Room foreign key (IDCinema) references Cinema(IDCinema) on delete cascade on update cascade
+constraint pk_Room primary key (IDRoom)
 );
 
 -- tao bang Schedule (Lich phim)
@@ -92,9 +83,7 @@ Price					Decimal(10,2) not null,
 Status 					enum('Dang Chieu', 'Ngung Chieu') default 'Dang Chieu',
 create_at timestamp default CURRENT_TIMESTAMP,
 update_at timestamp default current_timestamp on update current_timestamp,
-constraint pk_Schedule primary key (IDSchedule),
-constraint fk_Schedule_Room foreign key(IDRoom) references Room(IDRoom) on delete cascade on update cascade,
-constraint fk_Schedule_Movie foreign key(IDMovie) references Movie(IDMovie) on delete cascade on update cascade
+constraint pk_Schedule primary key (IDSchedule)
 );
 
 
@@ -108,11 +97,7 @@ TicketStatus		enum('Da Dat', 'Bi Huy', 'Chua Thanh Toan') default 'Chua Thanh To
 Price				decimal(10, 2) not null,
 IDCustomer 			int not null,
 IDStaff 			int not null,
-constraint pk_Ticket primary key (IDTicket),
-constraint fk_Schedule_Ticket foreign key (IDSchedule) references Schedule(IDSchedule) on delete cascade on update cascade,
-constraint fk_Seat_Ticket foreign key (IDSeat) references Seat(IDSeat) on delete cascade on update cascade,
-constraint fk_Custom_Ticket foreign key (IDCustomer) references Customer(IDCustomer) on delete cascade,
-constraint fk_Staff_Ticket foreign key (IDStaff) references Staff(IDStaff) on delete cascade on update cascade 
+constraint pk_Ticket primary key (IDTicket)
 );
 
 
@@ -125,12 +110,8 @@ SeatNumber 		 int not null,     -- Số ghế trong hàng
 Status      	 enum('Available', 'Booked', 'Broken') default 'Available',
 create_at  		 timestamp default CURRENT_TIMESTAMP,
 update_at 		 timestamp default current_timestamp on update current_timestamp,
-constraint pk_Seat primary key (IDSeat),
-constraint fk_Room_Seat foreign key (IDRoom) references Room(IDRoom) on delete cascade
+constraint pk_Seat primary key (IDSeat)
 );
-
-insert into User_System(Username, Usermail, UserPassword, UserRole) values ('Bach', 'bachnd2006@outlook.com', 'Bachnguyen54', 'Staff'), ('Duy', 'Duy2006@gmail.com', 'Duy123432', 'Staff');
-select * from User_System;
 
 insert into Staff(Staff_Name,Staff_Mail, IDCinema ) values ('Bach', 'bachnd2006@outlook.com', '1'), ('Duy', 'Duy2006@gmail.com', '1'), ('Tuat', 'Tuat06.24ai@vku.udn.vn', '1');
 select * from Staff;
