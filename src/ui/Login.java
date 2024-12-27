@@ -171,6 +171,9 @@ public class Login extends JFrame {
                 if (username.startsWith("@admin")) {
                     new NhanVienUI().setVisible(true);
                 }
+                else {
+                	new DatVe().setVisible(true);
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "Invalid credentials. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
