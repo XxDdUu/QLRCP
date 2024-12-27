@@ -1,12 +1,9 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseOperation {
-	public Connection connectToDataBase() {
+	public static Connection connectToDataBase() {
 		Connection connection = null;
 		try {
 			connection = DriverManager.getConnection(Constant.String_DB_Url, Constant.username, Constant.password);

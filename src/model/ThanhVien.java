@@ -1,34 +1,34 @@
 package model;
 
 public class ThanhVien {
-	private String MATv;
-	private String HoTen;
-	private String email;
+	private int IDCustomer;
+	private String Customername;
+	private int CustomerPhoneNumber;
 	private String LoaiDoiTuong;
-	public ThanhVien(String mATv, String hoTen, String email, String loaiDoiTuong) {
+	public ThanhVien(int IDCustomer, String Customername, String CustomerPhoneNumber, String loaiDoiTuong) {
 		super();
-		MATv = mATv;
-		HoTen = hoTen;
-		email = email;
+		IDCustomer = IDCustomer;
+		Customername = Customername;
+		CustomerPhoneNumber = CustomerPhoneNumber;
 		LoaiDoiTuong = loaiDoiTuong;
 	}
-	public String getMATv() {
-		return MATv;
+	public int getIDCustomer() {
+		return IDCustomer;
 	}
-	public void setMATv(String mATv) {
-		MATv = mATv;
+	public void setMATv(int IDCustomer) {
+		IDCustomer = IDCustomer;
 	}
-	public String getHoTen() {
-		return HoTen;
+	public String getCustomername() {
+		return Customername;
 	}
-	public void setHoTen(String hoTen) {
-		HoTen = hoTen;
+	public void setCustomername(String Customername) {
+		Customername = Customername;
 	}
-	public String getemail() {
-		return email;
+	public int getCustomerPhoneNumber() {
+		return CustomerPhoneNumber;
 	}
-	public void setemail(String email) {
-		email = email;
+	public void setCustomerPhoneNumber(int CustomerPhoneNumber) {
+		CustomerPhoneNumber = CustomerPhoneNumber;
 	}
 	public String getLoaiDoiTuong() {
 		return LoaiDoiTuong;

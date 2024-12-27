@@ -3,6 +3,8 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import dao.DatabaseOperation;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,35 +25,36 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.border.LineBorder;
 
 public class Login extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Login frame = new Login();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    /**
+     * Launch the application.
+     */
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-	/**
-	 * Create the frame.
-	 */
-	public Login() {
-		JFrame frame = new JFrame("Login");
+    public Login() {
+        JFrame frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 500);
         frame.getContentPane().setLayout(null);
@@ -79,26 +82,26 @@ public class Login extends JFrame {
         usernameField.setForeground(java.awt.Color.GRAY);
         usernameField.addFocusListener(new FocusListener() {
 
-			@Override
-			public void focusGained(FocusEvent e) {
-				// TODO Auto-generated method stub
-				if (usernameField.getText().equals(placeholder)) {
+            @Override
+            public void focusGained(FocusEvent e) {
+                // TODO Auto-generated method stub
+                if (usernameField.getText().equals(placeholder)) {
                     usernameField.setText("");
                     usernameField.setForeground(java.awt.Color.BLACK);
                 }
-			}
+            }
 
-			@Override
-			public void focusLost(FocusEvent e) {
-				// TODO Auto-generated method stub
-				if (usernameField.getText().isEmpty()) {
+            @Override
+            public void focusLost(FocusEvent e) {
+                // TODO Auto-generated method stub
+                if (usernameField.getText().isEmpty()) {
                     usernameField.setText(placeholder);
                     usernameField.setForeground(java.awt.Color.GRAY);
                 }
-			}
+            }
 
-		
-        	
+
+
         });
         panel.add(usernameField);
 
@@ -110,25 +113,25 @@ public class Login extends JFrame {
         passwordField.setForeground(java.awt.Color.GRAY);
         passwordField.addFocusListener(new FocusListener() {
 
-			@SuppressWarnings("deprecation")
-			@Override
-			public void focusGained(FocusEvent e) {
-				// TODO Auto-generated method stub
-				if (passwordField.getText().equals(placeholder2)) {
-					passwordField.setText("");
-					passwordField.setForeground(java.awt.Color.BLACK);
+            @SuppressWarnings("deprecation")
+            @Override
+            public void focusGained(FocusEvent e) {
+                // TODO Auto-generated method stub
+                if (passwordField.getText().equals(placeholder2)) {
+                    passwordField.setText("");
+                    passwordField.setForeground(java.awt.Color.BLACK);
                 }
-			}
+            }
 
-			@SuppressWarnings("deprecation")
-			@Override
-			public void focusLost(FocusEvent e) {
-				// TODO Auto-generated method stub
-				if (passwordField.getText().isEmpty()) {
-					passwordField.setText(placeholder2);
+            @SuppressWarnings("deprecation")
+            @Override
+            public void focusLost(FocusEvent e) {
+                // TODO Auto-generated method stub
+                if (passwordField.getText().isEmpty()) {
+                    passwordField.setText(placeholder2);
                     passwordField.setForeground(java.awt.Color.GRAY);
                 }
-			}
+            }
 
         });
         panel.add(passwordField);
@@ -140,7 +143,7 @@ public class Login extends JFrame {
         loginButton.setForeground(new Color(51, 0, 255));
         loginButton.setFocusPainted(false);
         panel.add(loginButton);
-        
+
         JButton btnRegister = new JButton("Create an new account");
         btnRegister.setFont(new Font("Tahoma", Font.BOLD, 12));
         btnRegister.setForeground(new Color(51, 0, 255));
@@ -149,18 +152,16 @@ public class Login extends JFrame {
         btnRegister.setBounds(50, 216, 200, 38);
         btnRegister.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-				frame.setVisible(false);
-				new Register();
-				
-			}
-        	
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                frame.setVisible(false);
+                new Register();
+            }
+
         });
         panel.add(btnRegister);
 
-        // Button Action
         loginButton.addActionListener(new ActionListener() {
 
             @Override
@@ -168,18 +169,27 @@ public class Login extends JFrame {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
 
-                if (username.equals("admin") && password.equals("1234")) {
-                    JOptionPane.showMessageDialog(frame, "Login Successful!");
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Invalid Username or Password", "Error", JOptionPane.ERROR_MESSAGE);
+                try (Connection connection = DatabaseOperation.connectToDataBase()){
+                    String querry = "Select * from User_System where Username = ? and Userpassword = ?;";
+                    PreparedStatement stmt = connection.prepareStatement(querry);
+                    stmt.setString(1, username);
+                    stmt.setString(2, password);
+
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        JOptionPane.showMessageDialog(frame, "Login Successful!");
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Invalid Username or Password", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+               } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
-        
 
-        // Set Frame Visible
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        
-	}
+
+    }
 }
