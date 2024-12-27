@@ -63,15 +63,15 @@ constraint pk_Schedule primary key (IDSchedule)
 
 
 create table Ticket (
-IDTicket			int auto_increment,
-IDSchedule			int not null,
-IDSeat				int not null,
-TicketStatus		enum('Da Dat', 'Bi Huy', 'Chua Thanh Toan') default 'Chua Thanh Toan',
-Price				decimal(10, 2) not null,
+IDTicket		int IDENTITY(1, 1),
+BookTicketdate		date default getdate(),
+IDSeat			int not null,
 IDCustomer 			int not null,
-IDStaff 			int not null,
-constraint pk_Ticket primary key (IDTicket)
+TicketStatus	nvarchar(100) CHECK  (TicketStatus IN ('Da Dat', 'Bi Huy', 'Chua Thanh Toan')) default 'Chua Thanh Toan',
+Price			decimal(10, 2) not null,
+constraint pk_Ticket primary key (IDTicket),
 );
+
 
 create table Seat (
 IDSeat     		 int auto_increment,
