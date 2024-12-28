@@ -170,9 +170,13 @@ public class Login extends JFrame {
                 dispose();
                 if (username.startsWith("@admin")) {
                     new NhanVienUI().setVisible(true);
+                    
                 }
                 else {
+                	String customerID = getCustomerId(username, password);
                 	new DatVe().setVisible(true);
+                	new DatVe(customerID);
+ 
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Invalid credentials. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
@@ -207,6 +211,7 @@ public class Login extends JFrame {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
+                    	
                         return true;
                     }
                 }
@@ -215,6 +220,29 @@ public class Login extends JFrame {
             }
             return false;
         	}
-        
+        private String getCustomerId(String username, String password) {
+            String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+            String dbUsername = "sa";
+            String dbPassword = "duy15122006";
+            String query = "SELECT IDCustomer FROM customer WHERE Username = ? AND UserPassword = ?";
+            
+            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, password);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getString("IDCustomer");
+                    }
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            return null;
+        }
+
 	}   
 
