@@ -1,21 +1,21 @@
 package model;
 
 public class ThanhVien {
-	private String MATv;
+	private int MATv;
 	private String HoTen;
 	private String email;
 	private String LoaiDoiTuong;
-	public ThanhVien(String mATv, String hoTen, String email, String loaiDoiTuong) {
+	public ThanhVien(int mATv, String hoTen, String email, String loaiDoiTuong) {
 		super();
 		MATv = mATv;
 		HoTen = hoTen;
 		email = email;
 		LoaiDoiTuong = loaiDoiTuong;
 	}
-	public String getMATv() {
+	public int getMATv() {
 		return MATv;
 	}
-	public void setMATv(String mATv) {
+	public void setMATv(int mATv) {
 		MATv = mATv;
 	}
 	public String getHoTen() {

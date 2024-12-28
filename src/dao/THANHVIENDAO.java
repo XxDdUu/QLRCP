@@ -4,6 +4,7 @@ import java.util.List;
 
 import model.LICHCHIEU;
 import model.Phim;
+import model.ThanhVien;
 import model.Ve;
 
 public interface THANHVIENDAO {
@@ -13,4 +14,5 @@ public interface THANHVIENDAO {
 
 	Phim getMovieDetails(String MaPhim);
 
+	void addThanhVien(ThanhVien thanhvien);
 }

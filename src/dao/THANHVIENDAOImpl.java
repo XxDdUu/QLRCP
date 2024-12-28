@@ -49,7 +49,7 @@ public class THANHVIENDAOImpl implements THANHVIENDAO{
 		try (Connection connection = getConnection();
 			 PreparedStatement preparedStatement = connection.prepareStatement(query)){
 			preparedStatement.setString(1, thanhvien.getHoTen());
-			preparedStatement.setString(2, thanhvien.getDienThoai());
+			preparedStatement.setString(2, thanhvien.getemail());
 			preparedStatement.setString(3, thanhvien.getLoaiDoiTuong());
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Error", "Error adding Thanh Vien:" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
