@@ -3,14 +3,21 @@ package ui;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
@@ -21,7 +28,9 @@ public class ArcaneInfo extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-
+	private String customerID;
+	private String Title = "Arcane";
+	private String Director = "Pascal Charrue và Arnaud Delord";
 	/**
 	 * Launch the application.
 	 */
@@ -36,6 +45,10 @@ public class ArcaneInfo extends JFrame {
 				}
 			}
 		});
+	}
+	
+	public ArcaneInfo(String customerID) {
+		this.customerID = customerID;
 	}
 
 	/**
@@ -75,7 +88,9 @@ public class ArcaneInfo extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
                         dispose();
+                        String MovieID = getMovieID(Title, Director);
                         new MovieTicketBooking().setVisible(true);
+                        new MovieTicketBooking(customerID, MovieID);
 			}
 		});
 		btnNewButton.setBounds(366, 348, 158, 44);
@@ -90,6 +105,7 @@ public class ArcaneInfo extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 				new DatVe().setVisible(true);
+				new DatVe(customerID);
 				
 			}
 
@@ -113,6 +129,24 @@ public class ArcaneInfo extends JFrame {
 		// TODO Auto-generated method stub
 		return new ImageIcon(originalIcon1.getImage().getScaledInstance(imageWidth1, imageHeight1, java.awt.Image.SCALE_SMOOTH));
 	}
+	private String getMovieID(String Title, String Director) {
+		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+        String dbUsername = "sa";
+        String dbPassword = "duy15122006";
+        String query = "  SELECT IDMovie from Movie WHERE Title = ? AND Director = ?";
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        		PreparedStatement preparedStatement = connection.prepareStatement(query);
+        		){
+        		preparedStatement.setString(1, Title);
+        		preparedStatement.setString(2, Director);
+        	ResultSet resultSet = preparedStatement.executeQuery();
+        	if (resultSet.next()) {
+        		return resultSet.getString("IDMovie");
+        	}
+        } catch (SQLException e) {
+        	JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
 	}
-
+}
 
