@@ -36,6 +36,7 @@ public class AvengerInfo extends JFrame {
 	private String customerID;
 	private String Title = "Avenger";
 	private String Director = "Anthony Russo, Joe Russo";
+	private String RoomName = "RB";
 	/**
 	 * Launch the application.
 	 */
@@ -90,7 +91,7 @@ public class AvengerInfo extends JFrame {
 			public void actionPerformed(ActionEvent e) {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
-                        new MovieTicketBooking(customerID, MovieID);
+                        new MovieTicketBooking(customerID, MovieID, RoomName);
                         new MovieTicketBooking().setVisible(true);
 			}
 		});
