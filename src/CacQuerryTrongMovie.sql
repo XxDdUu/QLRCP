@@ -19,7 +19,7 @@ insert into Customer(CustomerName, CustomerPhoneNumber, CustomerType) values ('D
  select * from Customer;
  
  -- insert du lieu mau cho table Staff
-insert into Staff(Staff_Name, Staff_Mail) values ('Duy', 'Duy123432@gmail.com' ), ('Khanh','Khanh98@gmail.com');
+insert into Staff(Staff_Name,Staff_Pass ) values ('@admin', '1234'), ('Bach', 'Bachnguyen54'), ('Duy', 'Duy15122006'), ('Tuat', 'Tuat12345');
 
 --insert du leu cho movie
 INSERT INTO Movie (Title, Genre, Duration, Director,release_date, Moviedescrip )VALUES 
@@ -45,3 +45,26 @@ sống xa nhà mẹ. Một ngày nọ, bà Hai bị
  tai nạn và bó bột chân, buộc năm người 
 con phải tìm cách về chăm lo cho mẹ.' )
 
+-- insert du lieu mau cho table Room
+insert into Room(RoomName, capacity, Status) values ('RA', '25', default), ('RB', '25', default), ('RC', '25', default);
+select * from Room;
+-- insert dữ liệu mẫu cho table Seat
+INSERT INTO Seat(IDRoom, SeatName)
+VALUES 
+(1, 'R1C1'),(1, 'R1C2'),(1, 'R1C3'),(1, 'R1C4'),(1, 'R1C5'),
+(1, 'R2C1'),(1, 'R2C2'),(1, 'R2C3'),(1, 'R2C4'),(1, 'R2C5'),
+(1, 'R3C1'),(1, 'R3C2'),(1, 'R3C3'),(1, 'R3C4'),(1, 'R3C5'),
+(1, 'R4C1'),(1, 'R4C2'),(1, 'R4C3'),(1, 'R4C4'),(1, 'R4C5'),
+(1, 'R5C1'),(1, 'R5C2'),(1, 'R5C3'),(1, 'R5C4'),(1, 'R5C5'),
+
+(2, 'R1C1'),(2, 'R1C2'),(2, 'R1C3'),(2, 'R1C4'),(2, 'R1C5'),
+(2, 'R2C1'),(2, 'R2C2'),(2, 'R2C3'),(2, 'R2C4'),(2, 'R2C5'),
+(2, 'R3C1'),(2, 'R3C2'),(2, 'R3C3'),(2, 'R3C4'),(2, 'R3C5'),
+(2, 'R4C1'),(2, 'R4C2'),(2, 'R4C3'),(2, 'R4C4'),(2, 'R4C5'),
+(2, 'R5C1'),(2, 'R5C2'),(2, 'R5C3'),(2, 'R5C4'),(2, 'R5C5'),
+
+(3, 'R1C1'),(3, 'R1C2'),(3, 'R1C3'),(3, 'R1C4'),(3, 'R1C5'),
+(3, 'R2C1'),(3, 'R2C2'),(3, 'R2C3'),(3, 'R2C4'),(3, 'R2C5'),
+(3, 'R3C1'),(3, 'R3C2'),(3, 'R3C3'),(3, 'R3C4'),(3, 'R3C5'),
+(3, 'R4C1'),(3, 'R4C2'),(3, 'R4C3'),(3, 'R4C4'),(3, 'R4C5'),
+(3, 'R5C1'),(3, 'R5C2'),(3, 'R5C3'),(3, 'R5C4'),(3, 'R5C5');
