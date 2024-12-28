@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -25,7 +26,7 @@ public class DatVe extends JFrame {
 	private static final long serialVersionUID = 1L;
 	protected static final boolean False = false;
 	private JPanel contentPane;
-
+	private String customerID;
 	/**
 	 * Launch the application.
 	 */
@@ -42,9 +43,11 @@ public class DatVe extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	public DatVe(String customerID) {
+		this.customerID = customerID;
+	}
+	
+	
 	public DatVe() {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -110,8 +113,8 @@ public class DatVe extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
+				new AvengerInfo(customerID);
 				new AvengerInfo().setVisible(true);
-				
 			}
 
 			
@@ -128,6 +131,7 @@ public class DatVe extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
+				new LatMatInfo(customerID);
 				new LatMatInfo().setVisible(true);
 				
 			}
@@ -145,21 +149,28 @@ public class DatVe extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
+				new ArcaneInfo(customerID);
 				new ArcaneInfo().setVisible(true);
 				
 			}
-
+		
 			
 			
         });
-        
-        
+        JButton btnCancel = new JButton("Đăng xuất");
+        btnCancel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        btnCancel.setBounds(304, 430, 200, 40);
+        panel.add(btnCancel);
+        btnCancel.addActionListener(e -> {
+        	int reply = JOptionPane.showConfirmDialog(this, "Bạn muốn đăng xuất?", "Xác nhận", JOptionPane.OK_CANCEL_OPTION);
+        	if (reply == JOptionPane.OK_OPTION) {
+        		dispose();
+        		new Login().setVisible(true);
+        	}
+        });
         
     }
 
-    /**
-     * Resize the given ImageIcon to the specified width and height.
-     */
     private ImageIcon resizeImage(ImageIcon originalIcon, int width, int height) {
         return new ImageIcon(originalIcon.getImage().getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
     }
@@ -173,3 +184,4 @@ public class DatVe extends JFrame {
            return new ImageIcon(originalIcon2.getImage().getScaledInstance(width2, height2, java.awt.Image.SCALE_SMOOTH));
 	}
 }
+
