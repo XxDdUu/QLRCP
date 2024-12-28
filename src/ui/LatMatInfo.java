@@ -29,6 +29,7 @@ public class LatMatInfo extends JFrame {
 	private String customerID;
 	private String Title = "Lật mặt 7";
 	private String Director = "Lý Hải";
+	private String RoomName = "RC";
 	/**
 	 * Launch the application.
 	 */
@@ -86,7 +87,7 @@ public class LatMatInfo extends JFrame {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
                         new MovieTicketBooking().setVisible(true);
-                        new MovieTicketBooking(customerID, MovieID);
+                        new MovieTicketBooking(customerID, MovieID, RoomName);
 			}
 		});
 		btnNewButton.setBounds(366, 348, 158, 44);
