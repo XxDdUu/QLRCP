@@ -31,6 +31,7 @@ public class ArcaneInfo extends JFrame {
 	private String customerID;
 	private String Title = "Arcane";
 	private String Director = "Pascal Charrue và Arnaud Delord";
+	private String RoomName = "RA";
 	/**
 	 * Launch the application.
 	 */
@@ -90,7 +91,7 @@ public class ArcaneInfo extends JFrame {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
                         new MovieTicketBooking().setVisible(true);
-                        new MovieTicketBooking(customerID, MovieID);
+                        new MovieTicketBooking(customerID, MovieID, RoomName);
 			}
 		});
 		btnNewButton.setBounds(366, 348, 158, 44);
