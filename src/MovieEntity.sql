@@ -76,8 +76,7 @@ constraint pk_Ticket primary key (IDTicket),
 create table Seat (
 IDSeat     		 int auto_increment,
 IDRoom     		 int not null,
-SeatRow    		 char(1) not null, -- Hàng ghế (A, B, C, ...)
-SeatNumber 		 int not null,     -- Số ghế trong hàng
+SeatName      varchar(50) not null,
 Status      	 enum('Available', 'Booked', 'Broken') default 'Available',
 create_at  		 timestamp default CURRENT_TIMESTAMP,
 update_at 		 timestamp default current_timestamp on update current_timestamp,
