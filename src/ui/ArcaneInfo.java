@@ -35,27 +35,15 @@ public class ArcaneInfo extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ArcaneInfo frame = new ArcaneInfo();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
 	public ArcaneInfo(String customerID) {
 		this.customerID = customerID;
+		initializeGUIArcaneInfo();
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public ArcaneInfo() {
+	private void initializeGUIArcaneInfo() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 655, 493);
 		contentPane = new JPanel();
@@ -90,7 +78,6 @@ public class ArcaneInfo extends JFrame {
 			public void actionPerformed(ActionEvent e) {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
-                        new MovieTicketBooking().setVisible(true);
                         new MovieTicketBooking(customerID, MovieID, RoomName);
 			}
 		});
@@ -105,7 +92,6 @@ public class ArcaneInfo extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new DatVe().setVisible(true);
 				new DatVe(customerID);
 				
 			}
@@ -123,7 +109,7 @@ public class ArcaneInfo extends JFrame {
         imageLabel1.setBounds(10, 59, 250, 300);
         contentPane.add(imageLabel1);
         imageLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-		
+		setVisible(true);
 	}
 
 	private ImageIcon resizeImage1(ImageIcon originalIcon1, int imageWidth1, int imageHeight1) {
