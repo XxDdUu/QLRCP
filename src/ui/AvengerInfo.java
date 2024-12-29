@@ -40,24 +40,12 @@ public class AvengerInfo extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AvengerInfo frame = new AvengerInfo();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	
 	public AvengerInfo(String customerID) {
 		this.customerID = customerID;
+		initializeGUIAvengerInfo();
 	}
 
-	public AvengerInfo() {
+	private void initializeGUIAvengerInfo() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 655, 493);
 		contentPane = new JPanel();
@@ -92,7 +80,6 @@ public class AvengerInfo extends JFrame {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
                         new MovieTicketBooking(customerID, MovieID, RoomName);
-                        new MovieTicketBooking().setVisible(true);
 			}
 		});
 		btnNewButton.setBounds(366, 235, 158, 44);
@@ -106,7 +93,6 @@ public class AvengerInfo extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new DatVe().setVisible(true);
 				new DatVe(customerID);
 			}
 		
@@ -114,6 +100,7 @@ public class AvengerInfo extends JFrame {
 			
         });
 		contentPane.add(btnHy);
+		setVisible(true);
 	}
 	private String getMovieID(String Title, String Director) {
 		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
