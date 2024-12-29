@@ -68,7 +68,7 @@ public class Login extends JFrame {
         JPanel panel = new JPanel();
         panel.setBounds(50, 80, 300, 300);
         panel.setBackground(Color.WHITE);
-        panel.setLayout(null);
+        panel.setLayout(null);	
         getContentPane().add(panel);
 
         JLabel titleLabel = new JLabel("Sign In");
@@ -174,7 +174,6 @@ public class Login extends JFrame {
                 }
                 else {
                 	String customerID = getCustomerId(username, password);
-                	new DatVe().setVisible(true);
                 	new DatVe(customerID);
  
                 }
