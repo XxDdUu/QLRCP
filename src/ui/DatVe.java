@@ -27,28 +27,13 @@ public class DatVe extends JFrame {
 	protected static final boolean False = false;
 	private JPanel contentPane;
 	private String customerID;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					DatVe frame = new DatVe();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	public DatVe(String customerID) {
 		this.customerID = customerID;
+		initializeMainGui();
 	}
 	
-	
-	public DatVe() {
+	private void initializeMainGui() {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100,  850, 600);
@@ -114,7 +99,6 @@ public class DatVe extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 				new AvengerInfo(customerID);
-				new AvengerInfo().setVisible(true);
 			}
 
 			
@@ -131,13 +115,8 @@ public class DatVe extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new LatMatInfo(customerID);
-				new LatMatInfo().setVisible(true);
-				
+				new LatMatInfo(customerID);				
 			}
-
-			
-			
         });
         
         JButton btnArcane = new JButton("Arcane");
@@ -149,9 +128,7 @@ public class DatVe extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new ArcaneInfo(customerID);
-				new ArcaneInfo().setVisible(true);
-				
+				new ArcaneInfo(customerID);		
 			}
 		
 			
@@ -168,7 +145,7 @@ public class DatVe extends JFrame {
         		new Login().setVisible(true);
         	}
         });
-        
+        setVisible(true);
     }
 
     private ImageIcon resizeImage(ImageIcon originalIcon, int width, int height) {
