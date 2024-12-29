@@ -33,27 +33,16 @@ public class LatMatInfo extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					LatMatInfo frame = new LatMatInfo();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 	
 	public LatMatInfo(String customerID){
 		this.customerID = customerID;
+		initializeGUILatMatInfo();
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public LatMatInfo() {
+	private void initializeGUILatMatInfo() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 655, 493);
 		contentPane = new JPanel();
@@ -86,8 +75,8 @@ public class LatMatInfo extends JFrame {
 			public void actionPerformed(ActionEvent e) {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
-                        new MovieTicketBooking().setVisible(true);
                         new MovieTicketBooking(customerID, MovieID, RoomName);
+                        
 			}
 		});
 		btnNewButton.setBounds(366, 348, 158, 44);
@@ -101,16 +90,12 @@ public class LatMatInfo extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new DatVe().setVisible(true);
 				new DatVe(customerID);
-				
 			}
-		
 
-			
-			
         });
 		contentPane.add(btnHy);
+		setVisible(true);
 	}
 	private String getMovieID(String Title, String Director) {
 		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
