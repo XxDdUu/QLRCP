@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseOperation {
-	public Connection connectToDataBase() {
+	public static Connection connectToDataBase() {
 		Connection connection = null;
 		try {
 			connection = DriverManager.getConnection(Constant.String_DB_Url, Constant.username, Constant.password);
