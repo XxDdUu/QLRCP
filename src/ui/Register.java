@@ -4,7 +4,7 @@ package ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.Border;
+import java.io.Serial;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 public class Register extends JFrame {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private JTextField usernameField, phoneField, typeField;
     private JPasswordField passwordField;
@@ -59,7 +60,7 @@ public class Register extends JFrame {
         phoneField = createPlaceholderTextField("Enter your phone number", 100);
         panel.add(phoneField);
 
-        passwordField = createPlaceholderPasswordField("Enter your password", 150);
+        passwordField = createPlaceholderPasswordField();
         panel.add(passwordField);
 
         typeField = createPlaceholderTextField("Enter user type", 200);
@@ -67,7 +68,7 @@ public class Register extends JFrame {
 
         JButton registerButton = new JButton("Confirm");
         registerButton.setBounds(90, 260, 120, 30);
-        registerButton.setForeground(Color.WHITE);
+        registerButton.setForeground(Color.BLACK);
         registerButton.setBackground(new Color(0x0057D9));
         registerButton.setFocusPainted(false);
         registerButton.addActionListener(this::handleRegister);
@@ -83,10 +84,10 @@ public class Register extends JFrame {
         return textField;
     }
 
-    private JPasswordField createPlaceholderPasswordField(String placeholder, int y) {
-        JPasswordField passwordField = new JPasswordField(placeholder);
-        passwordField.setBounds(50, y, 200, 30);
-        setPlaceholderBehavior(passwordField, placeholder);
+    private JPasswordField createPlaceholderPasswordField() {
+        JPasswordField passwordField = new JPasswordField("Enter your password");
+        passwordField.setBounds(50, 150, 200, 30);
+        setPlaceholderBehavior(passwordField, "Enter your password");
         return passwordField;
     }
 
@@ -135,12 +136,12 @@ public class Register extends JFrame {
             insertQuery = "INSERT INTO Staff (Staff_Name, Staff_Mail, Staff_Pass) VALUES (?, ?, ?)";
         } else {
             // Customer registration
-            insertQuery = "INSERT INTO Customer (Username, CustomerPhoneNumber, UserPassword, CustomerType) VALUES (?, ?, ?, ?)";
+            insertQuery = "INSERT INTO Customer (CustomerName, CustomerPhoneNumber, CustomerPass, CustomerType) VALUES (?, ?, ?, ?)";
         }
 
-        String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-        String dbUsername = "sa";
-        String dbPassword = "duy15122006";
+        String dbUrl = "jdbc:mysql://localhost:3306/Movie";
+        String dbUsername = "root";
+        String dbPassword = "12345678";
 
         try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {

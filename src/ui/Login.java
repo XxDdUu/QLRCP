@@ -1,27 +1,16 @@
 package ui;
 
-import java.awt.BorderLayout;
-
 import java.awt.EventQueue;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.Connection;
@@ -29,9 +18,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javax.swing.border.LineBorder;
-import dao.*;
 
 public class Login extends JFrame {
 
@@ -68,7 +54,7 @@ public class Login extends JFrame {
         JPanel panel = new JPanel();
         panel.setBounds(50, 80, 300, 300);
         panel.setBackground(Color.WHITE);
-        panel.setLayout(null);	
+        panel.setLayout(null);
         getContentPane().add(panel);
 
         JLabel titleLabel = new JLabel("Sign In");
@@ -104,8 +90,8 @@ public class Login extends JFrame {
                 }
 			}
 
-		
-        	
+
+
         });
         panel.add(usernameField);
 
@@ -147,7 +133,7 @@ public class Login extends JFrame {
         loginButton.setForeground(new Color(51, 0, 255));
         loginButton.setFocusPainted(false);
         panel.add(loginButton);
-        
+
         JButton btnRegister = new JButton("Create an new account");
         btnRegister.setFont(new Font("Tahoma", Font.BOLD, 12));
         btnRegister.setForeground(new Color(51, 0, 255));
@@ -170,38 +156,35 @@ public class Login extends JFrame {
                 dispose();
                 if (username.startsWith("@admin")) {
                     new NhanVienUI().setVisible(true);
-                    
                 }
                 else {
-                	String customerID = getCustomerId(username, password);
-                	new DatVe(customerID);
- 
+                	new DatVe().setVisible(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Invalid credentials. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        
+
 
         // Set Frame Visible
         setLocationRelativeTo(null);
         setVisible(true);
 	}
-        
+
         private boolean validateCredentials(String username, String password) {
-            String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-            String dbUsername = "sa";
-            String dbPassword = "duy15122006";
+            String dbUrl = "jdbc:mysql://localhost:3306/Movie";
+            String dbUsername = "root";
+            String dbPassword = "12345678";
             String query;
-            
+
             if (username.startsWith("@admin")) {
                 // Staff login
-                 query = "SELECT * FROM staff WHERE Staff_Name = ? AND Staff_Pass = ?";
+                 query = "SELECT * FROM Staff WHERE Staff_Name = ? AND Staff_Pass = ?";
             } else {
                 // Customer logins
-                 query = "SELECT * FROM customer WHERE Username = ? AND UserPassword = ?";
-            }  
+                 query = "SELECT * FROM Customer WHERE CustomerName = ? AND CustomerPass = ?";
+            }
             try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
                  PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -210,7 +193,6 @@ public class Login extends JFrame {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                    	
                         return true;
                     }
                 }
@@ -219,29 +201,6 @@ public class Login extends JFrame {
             }
             return false;
         	}
-        private String getCustomerId(String username, String password) {
-            String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-            String dbUsername = "sa";
-            String dbPassword = "duy15122006";
-            String query = "SELECT IDCustomer FROM customer WHERE Username = ? AND UserPassword = ?";
-            
-            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
-                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-                preparedStatement.setString(1, username);
-                preparedStatement.setString(2, password);
-
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        return resultSet.getString("IDCustomer");
-                    }
-                }
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-
-            return null;
-        }
-
-	}   
+	}
 
