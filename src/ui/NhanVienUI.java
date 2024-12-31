@@ -173,6 +173,7 @@ public final class NhanVienUI extends JFrame {
             }
         });
     }
+    
     public static void main(String[] args) {
         try{
             (new NhanVienUI()).setVisible(true);
