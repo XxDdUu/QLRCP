@@ -58,7 +58,7 @@ public final class NhanVienUI extends JFrame {
                 while (rs.next()) {
                     int id = rs.getInt("ID");
                     String name = rs.getString("Ten khach hang");
-                    int phone = rs.getInt("So dien thoai");
+                    String phone = rs.getString("So dien thoai");
                     String type = rs.getString("Loai khach hang");
 
                     customerlist.add(new Object[]{id, name, phone, type});
