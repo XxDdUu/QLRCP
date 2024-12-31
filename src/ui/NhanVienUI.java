@@ -8,6 +8,8 @@ import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +17,6 @@ import java.sql.SQLException;
 import java.time.Year;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -34,18 +35,18 @@ public final class NhanVienUI extends JFrame {
             java.sql.ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     int id = rs.getInt("ID");
-                    String title = rs.getString("Tiêu đề");
-                    String genre = rs.getString("The loai");
-                    int duration = rs.getInt("Thoi luong phim");
-                    String director = rs.getString("Dao Dien");
-                    java.sql.Date release_date = rs.getDate("Ngay Chieu Phim");
-                    String description = rs.getString("Mo ta");
+                    String title = rs.getString("Title");
+                    String genre = rs.getString("Genre");
+                    int duration = rs.getInt("Duration");
+                    String director = rs.getString("Director");
+                    java.sql.Date release_date = rs.getDate("release_date");
+                    String description = rs.getString("Moviedescrip");
 
                     movielist.add(new Object[]{id, title, genre, duration, director, release_date, description});
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return movielist.toArray(new Object[0][0]);
     }
@@ -56,16 +57,16 @@ public final class NhanVienUI extends JFrame {
             try (PreparedStatement stmt = connection.prepareStatement(sql);
                  java.sql.ResultSet rs = stmt.executeQuery()){
                 while (rs.next()) {
-                    int id = rs.getInt("ID");
-                    String name = rs.getString("Ten khach hang");
-                    String phone = rs.getString("So dien thoai");
-                    String type = rs.getString("Loai khach hang");
+                    int id = rs.getInt("IDCustomer");
+                    String name = rs.getString("Username");
+                    String phone = rs.getString("CustomerPhoneNumber");
+                    String type = rs.getString("CustomerType");
 
                     customerlist.add(new Object[]{id, name, phone, type});
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return customerlist.toArray(new Object[0][0]);
     }
@@ -98,7 +99,7 @@ public final class NhanVienUI extends JFrame {
         JTable t1= new JTable(khdatatab, cotkh);
 
         Object[][] phimdatatab= loadMovieDataFromDatabase();
-        String[] cotph= {"ID", "Tiêu đề", "Thể loại phim", "Thời hạn phim",  "Ngày phát hành", "Đạo diễn", "Miêu tả"};
+        String[] cotph= {"ID", "Tiêu đề", "Thể loại phim", "Thời hạn phim", "Đạo diễn", "Ngày phát hành",  "Miêu tả"};
         JTable t2= new JTable(phimdatatab, cotph);
 
         DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
@@ -128,8 +129,8 @@ public final class NhanVienUI extends JFrame {
             sp1.setVisible(false);
             sp2.setVisible(true);
             ButtonPanel.setVisible(true);
+            
         });
-
 
         b3.addActionListener((e) -> {
             JTextField title = new JTextField();
@@ -173,7 +174,6 @@ public final class NhanVienUI extends JFrame {
             }
         });
     }
-    
     public static void main(String[] args) {
         try{
             (new NhanVienUI()).setVisible(true);
