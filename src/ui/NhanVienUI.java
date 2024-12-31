@@ -1,18 +1,12 @@
 package ui;
 import dao.DatabaseOperation;
-import model.Phim;
-import model.ThanhVien;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Year;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -33,13 +27,13 @@ public final class NhanVienUI extends JFrame {
             try (PreparedStatement stmt = connection.prepareStatement(sql);
             java.sql.ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("ID");
-                    String title = rs.getString("Tiêu đề");
-                    String genre = rs.getString("The loai");
-                    int duration = rs.getInt("Thoi luong phim");
-                    String director = rs.getString("Dao Dien");
-                    java.sql.Date release_date = rs.getDate("Ngay Chieu Phim");
-                    String description = rs.getString("Mo ta");
+                    int id = rs.getInt("IDMovie");
+                    String title = rs.getString("Title");
+                    String genre = rs.getString("Genre");
+                    int duration = rs.getInt("Duration");
+                    String director = rs.getString("Director");
+                    java.sql.Date release_date = rs.getDate("release_date");
+                    String description = rs.getString("Moviedescrip");
 
                     movielist.add(new Object[]{id, title, genre, duration, director, release_date, description});
                 }
@@ -50,24 +44,24 @@ public final class NhanVienUI extends JFrame {
         return movielist.toArray(new Object[0][0]);
     }
     private Object[][] loadCustomerFromDatabase() {
-        ArrayList<Object[]> customerlist = new ArrayList<>();
+        ArrayList<Object[]> CustomerList = new ArrayList<>();
         try (Connection connection = DatabaseOperation.connectToDataBase()){
             String sql = "Select * from Customer;";
             try (PreparedStatement stmt = connection.prepareStatement(sql);
                  java.sql.ResultSet rs = stmt.executeQuery()){
                 while (rs.next()) {
-                    int id = rs.getInt("ID");
-                    String name = rs.getString("Ten khach hang");
-                    String phone = rs.getString("So dien thoai");
-                    String type = rs.getString("Loai khach hang");
+                    int id = rs.getInt("IDCustomer");
+                    String name = rs.getString("CustomerName");
+                    String phone = rs.getString("CustomerPhoneNumber");
+                    String type = rs.getString("CustomerType");
 
-                    customerlist.add(new Object[]{id, name, phone, type});
+                    CustomerList.add(new Object[]{id, name, phone, type});
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return customerlist.toArray(new Object[0][0]);
+        return CustomerList.toArray(new Object[CustomerList.size()][]);
     }
     public void initUI() {
         this.setSize(1000, 800);
@@ -95,12 +89,13 @@ public final class NhanVienUI extends JFrame {
 
         Object[][] khdatatab= loadCustomerFromDatabase();
         String[] cotkh= {"ID", "Tên", "So dien thoai", "Loại khách"};
-        JTable t1= new JTable(khdatatab, cotkh);
 
         Object[][] phimdatatab= loadMovieDataFromDatabase();
-        String[] cotph= {"ID", "Tiêu đề", "Thể loại phim", "Thời hạn phim",  "Ngày phát hành", "Đạo diễn", "Miêu tả"};
-        JTable t2= new JTable(phimdatatab, cotph);
-
+        String[] cotph= {"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim",  "Đạo diễn", "Ngày phát hành", "Miêu tả"};
+        DefaultTableModel tblmodel1= new DefaultTableModel(khdatatab, cotkh);
+        DefaultTableModel tblmodel2= new DefaultTableModel(phimdatatab, cotph);
+        JTable t1= new JTable(tblmodel1);
+        JTable t2= new JTable(tblmodel2);
         DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
         dtcr.setHorizontalAlignment(JLabel.CENTER);
         for (int i=0; i<t1.getColumnCount(); i++) {
