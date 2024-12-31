@@ -6,6 +6,7 @@ use Movie;
 create table Customer(
 IDCustomer				int auto_increment,
 CustomerName			nvarchar(100) not null,
+CustomerPass			nvarchar(100) not null,
 CustomerPhoneNumber		varchar(15) check (CustomerPhoneNumber regexp '^[0-9]{10,15}$'),
 CustomerType			enum('Nguoi lon', 'Tre em') Default ('Nguoi lon'),
 constraint pk_User	primary key(IDCustomer)
@@ -15,7 +16,7 @@ constraint pk_User	primary key(IDCustomer)
 create table Staff (
 IDStaff					int auto_increment,
 Staff_Name				nvarchar(100) not null,
-Staff_Mail				nvarchar(100) not null,
+Staff_Pass				nvarchar(100) not null,
 constraint pk_Staff	primary key (IDStaff)
 );
 
