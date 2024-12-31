@@ -58,7 +58,7 @@ public final class NhanVienUI extends JFrame {
                  java.sql.ResultSet rs = stmt.executeQuery()){
                 while (rs.next()) {
                     int id = rs.getInt("IDCustomer");
-                    String name = rs.getString("Username");
+                    String name = rs.getString("CustomerName");
                     String phone = rs.getString("CustomerPhoneNumber");
                     String type = rs.getString("CustomerType");
 
@@ -99,7 +99,7 @@ public final class NhanVienUI extends JFrame {
         JTable t1= new JTable(khdatatab, cotkh);
 
         Object[][] phimdatatab= loadMovieDataFromDatabase();
-        String[] cotph= {"ID", "Tiêu đề", "Thể loại phim", "Thời hạn phim", "Đạo diễn", "Ngày phát hành",  "Miêu tả"};
+        String[] cotph= {"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim", "Đạo diễn", "Ngày phát hành",  "Miêu tả"};
         JTable t2= new JTable(phimdatatab, cotph);
 
         DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
