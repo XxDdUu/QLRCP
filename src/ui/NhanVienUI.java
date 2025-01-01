@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -39,7 +38,7 @@ public final class NhanVienUI extends JFrame {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return movielist.toArray(new Object[0][0]);
     }
@@ -59,7 +58,7 @@ public final class NhanVienUI extends JFrame {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return CustomerList.toArray(new Object[CustomerList.size()][]);
     }
@@ -123,8 +122,8 @@ public final class NhanVienUI extends JFrame {
             sp1.setVisible(false);
             sp2.setVisible(true);
             ButtonPanel.setVisible(true);
+            
         });
-
 
         b3.addActionListener((e) -> {
             JTextField title = new JTextField();
@@ -168,7 +167,6 @@ public final class NhanVienUI extends JFrame {
             }
         });
     }
-    
     public static void main(String[] args) {
         try{
             (new NhanVienUI()).setVisible(true);

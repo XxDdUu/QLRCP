@@ -1,34 +1,34 @@
 package model;
 
 public class ThanhVien {
-	private int MATv;
-	private String HoTen;
-	private String email;
+	private String MATv;
+	private String Hoten;
+	private String phoneNumber;
 	private String LoaiDoiTuong;
-	public ThanhVien(int mATv, String hoTen, String email, String loaiDoiTuong) {
+	public ThanhVien(String mATv, String phoneNumber, String Hoten, String loaiDoiTuong) {
 		super();
-		MATv = mATv;
-		HoTen = hoTen;
-		email = email;
-		LoaiDoiTuong = loaiDoiTuong;
+		this.MATv = mATv;
+		this.phoneNumber = phoneNumber;
+		this.Hoten = Hoten;
+		this.LoaiDoiTuong = loaiDoiTuong;
 	}
-	public int getMATv() {
+	public String getMATv() {
 		return MATv;
 	}
-	public void setMATv(int mATv) {
+	public void setMATv(String mATv) {
 		MATv = mATv;
 	}
-	public String getHoTen() {
-		return HoTen;
+	public String getHoten() {
+		return Hoten;
 	}
-	public void setHoTen(String hoTen) {
-		HoTen = hoTen;
+	public void setHoten(String hoten) {
+		Hoten = hoten;
 	}
-	public String getemail() {
-		return email;
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
-	public void setemail(String email) {
-		email = email;
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 	public String getLoaiDoiTuong() {
 		return LoaiDoiTuong;
@@ -36,5 +36,6 @@ public class ThanhVien {
 	public void setLoaiDoiTuong(String loaiDoiTuong) {
 		LoaiDoiTuong = loaiDoiTuong;
 	}
+	
 	
 }
