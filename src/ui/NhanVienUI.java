@@ -179,7 +179,7 @@ public final class NhanVienUI extends JFrame {
         });
 
         b4.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhập Tên Phim muốn tìm: ");
+            String key = JOptionPane.showInputDialog(this, "Nhập Tên phim muốn tìm: ");
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()) {
                     String sql = "Select * from Movie where Title like ?";
@@ -204,6 +204,29 @@ public final class NhanVienUI extends JFrame {
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm phim!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        b5.addActionListener(e -> {
+            String key = JOptionPane.showInputDialog(this, "Nhập ID phim muốn xoá: ");
+            if (key != null && !key.trim().isEmpty()) {
+                try (Connection connection = DatabaseOperation.connectToDataBase()){
+                    String sql = "Delete from Movie where IDMovie = ?";
+                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
+                        stmt.setInt(1, Integer.parseInt(key));
+                        int RowsAffected = stmt.executeUpdate();
+                        if (RowsAffected > 0) {
+                            JOptionPane.showMessageDialog(this, "Xoá phim thành công!");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy phim để xoá!");
+                        }
+
+                        UpdateMovieList(t2);
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Lỗi khi xóa phim!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
