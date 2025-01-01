@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -42,19 +43,27 @@ public final class NhanVienUI extends JFrame {
         }
         return movielist.toArray(new Object[0][0]);
     }
+
+    private void UpdateMovieList(JTable t2) {
+        Object[][] phimdatatab = loadMovieDataFromDatabase();
+        DefaultTableModel tblmodel2 = new DefaultTableModel(phimdatatab, new String[]{"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim",
+                "Đạo diễn", "Ngày phát hành", "Miêu tả"});
+        t2.setModel(tblmodel2);
+    }
     private Object[][] loadCustomerFromDatabase() {
         ArrayList<Object[]> CustomerList = new ArrayList<>();
         try (Connection connection = DatabaseOperation.connectToDataBase()){
             String sql = "Select * from Customer;";
-            try (PreparedStatement stmt = connection.prepareStatement(sql);
-                 java.sql.ResultSet rs = stmt.executeQuery()){
-                while (rs.next()) {
-                    int id = rs.getInt("IDCustomer");
-                    String name = rs.getString("CustomerName");
-                    String phone = rs.getString("CustomerPhoneNumber");
-                    String type = rs.getString("CustomerType");
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        int id = rs.getInt("IDCustomer");
+                        String name = rs.getString("CustomerName");
+                        String phone = rs.getString("CustomerPhoneNumber");
+                        String type = rs.getString("CustomerType");
 
-                    CustomerList.add(new Object[]{id, name, phone, type});
+                        CustomerList.add(new Object[]{id, name, phone, type});
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -77,7 +86,7 @@ public final class NhanVienUI extends JFrame {
         ButtonPanel.setLayout(new GridLayout(2, 4));
         JButton b3 = new JButton("Thêm Phim");
         JButton b4 = new JButton("Tìm phim");
-        JButton b5 = new JButton("Xoa phim");
+        JButton b5 = new JButton("Xoá phim");
         JButton b6 = new JButton("Sửa phim");
         ButtonPanel.add(b3);
         ButtonPanel.add(b4);
@@ -87,7 +96,7 @@ public final class NhanVienUI extends JFrame {
         this.add(ButtonPanel, BorderLayout.SOUTH);
 
         Object[][] khdatatab= loadCustomerFromDatabase();
-        String[] cotkh= {"ID", "Tên", "So dien thoai", "Loại khách"};
+        String[] cotkh= {"ID", "Tên", "Số điện thoại", "Loại khách"};
 
         Object[][] phimdatatab= loadMovieDataFromDatabase();
         String[] cotph= {"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim",  "Đạo diễn", "Ngày phát hành", "Miêu tả"};
@@ -136,15 +145,15 @@ public final class NhanVienUI extends JFrame {
             JTextArea description = new JTextArea();
 
             Object[] inputFields = {
-                    "Tên phim: ", title,
-                    "the loai: ", genre,
-                    "Thoi Luong: ", duration,
-                    "Ngay chieu phim: ", release_date,
-                    "Dao dien: ", director,
-                    "Mo ta: ", new JScrollPane(description)
+                    "Tên Phim: ", title,
+                    "Thể Loại: ", genre,
+                    "Thời Lượng: ", duration,
+                    "Ngày Chiếu Phim: ", release_date,
+                    "Đạo Diễn: ", director,
+                    "Mô Tả: ", new JScrollPane(description)
             };
 
-            int OK_option =JOptionPane.showConfirmDialog(this, inputFields, "Them Phim Moi", JOptionPane.OK_CANCEL_OPTION);
+            int OK_option =JOptionPane.showConfirmDialog(this, inputFields, "Thêm phim mới", JOptionPane.OK_CANCEL_OPTION);
 
             if (OK_option == JOptionPane.OK_OPTION) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()) {
@@ -158,11 +167,43 @@ public final class NhanVienUI extends JFrame {
                         stmt.setDate(5, new java.sql.Date(date.getTime()));
                         stmt.setString(6, description.getText());
                         stmt.executeUpdate();
-                        JOptionPane.showMessageDialog(this, "Them Phim Thanh Cong");
+                        JOptionPane.showMessageDialog(this, "Thêm phim thành công");
+
+                        UpdateMovieList(t2);
                     }
                 } catch (SQLException | NumberFormatException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Loi khi them phim!", "Loi", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Lỗi khi thêm phim mới!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        b4.addActionListener(e -> {
+            String key = JOptionPane.showInputDialog(this, "Nhập Tên Phim muốn tìm: ");
+            if (key != null && !key.trim().isEmpty()) {
+                try (Connection connection = DatabaseOperation.connectToDataBase()) {
+                    String sql = "Select * from Movie where Title like ?";
+                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
+                        stmt.setString(1, "%" + key + "%");
+                        try (ResultSet rs = stmt.executeQuery()){
+                            StringBuilder result = new StringBuilder("Kết quả tìm kiếm: \n");
+                            while (rs.next()) {
+                                result.append("ID: ").append(rs.getInt("IDMovie")).append("\n")
+                                        .append("Tên phim: ").append(rs.getString("Title")).append("\n")
+                                        .append("Thể loại: ").append(rs.getString("Genre")).append("\n")
+                                        .append("Thời lượng: ").append(rs.getString("Duration")).append(" Phút").append("\n")
+                                        .append("Đạo diễn: ").append(rs.getString("Director")).append("\n")
+                                        .append("Ngày phát hành: ").append(rs.getDate("release_date")).append("\n");
+                            }
+                            if (result.toString().equals("Kết quả tìm kiếm: \n")) {
+                                JOptionPane.showMessageDialog(this, "Không tìm thấy phim!");
+                            } else {
+                                JOptionPane.showMessageDialog(this, result.toString());
+                            }
+                        }
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
