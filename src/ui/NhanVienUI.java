@@ -230,6 +230,80 @@ public final class NhanVienUI extends JFrame {
                 }
             }
         });
+
+        b6.addActionListener(e -> {
+            String key = JOptionPane.showInputDialog(this, "Nhập ID phim muốn sửa: ");
+            if (key != null && !key.trim().isEmpty()) {
+                try (Connection connection = DatabaseOperation.connectToDataBase()){
+                    String sql = "Select * from Movie where IDMovie = ?";
+                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
+                        stmt.setString(1, key);
+                        try (ResultSet rs = stmt.executeQuery()){
+                            if (rs.next()) {
+                                String currentTitle = rs.getString("Title");
+                                String currentGenre = rs.getString("Genre");
+                                int currentDuration = rs.getInt("Duration");
+                                String currentDirector = rs.getString("Director");
+                                java.sql.Date currentRelease_date = rs.getDate("release_date");
+                                String currentDescription = rs.getString("Moviedescrip");
+
+                                JTextField title = new JTextField(currentTitle);
+                                JTextField genre = new JTextField(currentGenre);
+                                JTextField duration = new JTextField(currentDuration);
+                                JTextField director = new JTextField(currentDirector);
+                                SpinnerDateModel datamodel = new SpinnerDateModel(currentRelease_date, null, null, java.util.Calendar.DAY_OF_MONTH);
+                                JSpinner release_date = new JSpinner(datamodel);
+                                release_date.setEditor(new JSpinner.DateEditor(release_date, "yyyy-MM-dd"));
+                                JTextField description = new JTextField(currentDescription);
+
+
+                                Object[] inputFields = {
+                                        "Tên Phim: ", title,
+                                        "Thể Loại: ", genre,
+                                        "Thời Lượng: ", duration,
+                                        "Ngày Chiếu Phim: ", release_date,
+                                        "Đạo Diễn: ", director,
+                                        "Mô Tả: ", new JScrollPane(description)
+                                };
+
+                                int option = JOptionPane.showConfirmDialog(this, inputFields, "Sửa thông tin phim", JOptionPane.OK_CANCEL_OPTION);
+                                if (option == JOptionPane.OK_OPTION) {
+                                    String newTitle = title.getText().trim().isEmpty() ? currentTitle : title.getText();
+                                    String newGenre = genre.getText().trim().isEmpty() ? currentGenre : genre.getText();
+                                    int newDuration = duration.getText().trim().isEmpty() ? currentDuration : Integer.parseInt(duration.getText());
+                                    java.util.Date newRelease_date = (java.util.Date) release_date.getValue();
+                                    String newDirector = director.getText().trim().isEmpty() ? currentDirector : director.getText();
+                                    String newDescription = description.getText().trim().isEmpty() ? currentDescription : description.getText();
+
+                                    String updatesql = "Update Movie Set Title = ?, Genre = ?, Duration = ?, Director = ?, release_date = ?, Moviedescrip = ? where IDMovie = ?";
+                                    try (PreparedStatement stmt2 = connection.prepareStatement(updatesql)){
+                                        stmt2.setString(1, newTitle);
+                                        stmt2.setString(2, newGenre);
+                                        stmt2.setInt(3, newDuration);
+                                        stmt2.setString(4, newDirector);
+                                        stmt2.setDate(5, new java.sql.Date(newRelease_date.getTime()));
+                                        stmt2.setString(6, newDescription);
+                                        stmt2.setInt(7, Integer.parseInt(key));
+                                        int RowsAffected = stmt2.executeUpdate();
+                                        if (RowsAffected > 0 ) {
+                                            JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công!");
+                                            UpdateMovieList(t2);
+                                        } else {
+                                            JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                        }
+                                    }
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Không tìm thấy ID muốn cập nhật!");
+                            }
+                        }
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Lỗi khi sửa phim!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
     public static void main(String[] args) {
         try{
