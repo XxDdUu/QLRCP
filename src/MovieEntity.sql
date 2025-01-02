@@ -48,30 +48,17 @@ constraint pk_Room primary key (IDRoom)
 );
 
 
--- tao bang Schedule (Lich phim)
-create table Schedule (
-IDSchedule				int AUTO_INCREMENT,
-IDMovie					int not null,
-IDRoom					int not null,
-Showdate				date not null,
-Showtime				time not null,
-Price					Decimal(10,2) not null,
-Status 					enum('Dang Chieu', 'Ngung Chieu') default 'Dang Chieu',
-create_at timestamp default CURRENT_TIMESTAMP,
-update_at timestamp default current_timestamp on update current_timestamp,
-constraint pk_Schedule primary key (IDSchedule)
-);
-
-
 create table Ticket (
 IDTicket		int IDENTITY(1, 1),
-BookTicketdate		date default getdate(),
+IDMovie			int not null,
+IDRoom			int not null,
 IDSeat			int not null,
 IDCustomer 			int not null,
 TicketStatus	nvarchar(100) CHECK  (TicketStatus IN ('Da Dat', 'Bi Huy', 'Chua Thanh Toan')) default 'Chua Thanh Toan',
 Price			decimal(10, 2) not null,
 constraint pk_Ticket primary key (IDTicket),
 );
+
 
 
 create table Seat (
