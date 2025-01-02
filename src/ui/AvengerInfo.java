@@ -2,6 +2,7 @@
 package ui;
 
 import java.awt.EventQueue;
+import model.ThanhVien;
 import ui.Login;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,16 +33,15 @@ public class AvengerInfo extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private ArrayList<String> PhimAvengerInfo = new ArrayList<>();
-	private String customerID;
+	private ThanhVien thanhvien;
 	private String Title = "Avenger";
 	private String Director = "Anthony Russo, Joe Russo";
 	private String RoomName = "RB";
 	/**
 	 * Launch the application.
 	 */
-	public AvengerInfo(String customerID) {
-		this.customerID = customerID;
+	public AvengerInfo(ThanhVien thanhvien) {
+		this.thanhvien = thanhvien;
 		initializeGUIAvengerInfo();
 	}
 
@@ -79,7 +79,7 @@ public class AvengerInfo extends JFrame {
 			public void actionPerformed(ActionEvent e) {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
-                        new MovieTicketBooking(customerID, MovieID, RoomName);
+                        new MovieTicketBooking(thanhvien, MovieID, RoomName);
 			}
 		});
 		btnNewButton.setBounds(366, 235, 158, 44);
@@ -93,7 +93,7 @@ public class AvengerInfo extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new DatVe(customerID);
+				new DatVe(thanhvien);
 			}
 		
 			
