@@ -158,33 +158,37 @@ public class Login extends JFrame {
                     new NhanVienUI().setVisible(true);
                 }
                 else {
-                	new DatVe().setVisible(true);
+                	String customerID = getCustomerId(username, password);
+                	String customerType = getUserType(customerID);
+                	String customerPhoneNum = getUserPhone(customerID);
+                	ThanhVien thanhvien = new ThanhVien(customerID,customerPhoneNum ,username, customerType);
+                	new DatVe(thanhvien);
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "Invalid credentials. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-
+        
 
         // Set Frame Visible
         setLocationRelativeTo(null);
         setVisible(true);
 	}
-
+        
         private boolean validateCredentials(String username, String password) {
-            String dbUrl = "jdbc:mysql://localhost:3306/Movie";
-            String dbUsername = "root";
-            String dbPassword = "12345678";
+            String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+            String dbUsername = "sa";
+            String dbPassword = "duy15122006";
             String query;
-
+            
             if (username.startsWith("@admin")) {
                 // Staff login
-                 query = "SELECT * FROM Staff WHERE Staff_Name = ? AND Staff_Pass = ?";
+                 query = "SELECT * FROM staff WHERE Staff_Name = ? AND Staff_Pass = ?";
             } else {
                 // Customer logins
-                 query = "SELECT * FROM Customer WHERE CustomerName = ? AND CustomerPass = ?";
-            }
+                 query = "SELECT * FROM customer WHERE Username = ? AND UserPassword = ?";
+            }  
             try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
                  PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -193,6 +197,7 @@ public class Login extends JFrame {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
+                    	
                         return true;
                     }
                 }
@@ -201,6 +206,71 @@ public class Login extends JFrame {
             }
             return false;
         	}
+        private String getCustomerId(String username, String password) {
+            String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+            String dbUsername = "sa";
+            String dbPassword = "duy15122006";
+            String query = "SELECT IDCustomer FROM customer WHERE Username = ? AND UserPassword = ?";
+            
+            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+                 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-	}
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, password);
 
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getString("IDCustomer");
+                    }
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            return null;
+        }
+        private String getUserType(String customerID) {
+    		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+            String dbUsername = "sa";
+            String dbPassword = "duy15122006";
+            
+            String query = "SELECT CustomerType FROM Customer Where IDCustomer = ?";
+            
+            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+    	        	PreparedStatement preparedStatement = connection.prepareStatement(query);	
+    	        		){
+            	preparedStatement.setString(1, customerID);
+            	ResultSet resultSet = preparedStatement.executeQuery();
+            	if(resultSet.next());
+            	{
+                    String customerType = resultSet.getString("CustomerType");
+                    return  customerType;
+            	}
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            return null;
+    	}
+        private String getUserPhone(String customerID) {
+    		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+            String dbUsername = "sa";
+            String dbPassword = "duy15122006";
+            
+            String query = "SELECT CustomerPhoneNumber FROM Customer Where IDCustomer = ?";
+            
+            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+    	        	PreparedStatement preparedStatement = connection.prepareStatement(query);	
+    	        		){
+            	preparedStatement.setString(1, customerID);
+            	ResultSet resultSet = preparedStatement.executeQuery();
+            	if(resultSet.next());
+            	{
+                    String customerPhoneNumber = resultSet.getString("CustomerPhoneNumber");
+                    return  customerPhoneNumber;
+            	}
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            return null;
+    	}
+	}   
