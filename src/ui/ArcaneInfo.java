@@ -23,20 +23,21 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.Icon;
-
+import model.Phim;
+import model.ThanhVien;
 public class ArcaneInfo extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private String customerID;
+	private ThanhVien thanhvien;
 	private String Title = "Arcane";
 	private String Director = "Pascal Charrue và Arnaud Delord";
 	private String RoomName = "RA";
 	/**
 	 * Launch the application.
 	 */
-	public ArcaneInfo(String customerID) {
-		this.customerID = customerID;
+	public ArcaneInfo(ThanhVien thanhvien) {
+		this.thanhvien = thanhvien;
 		initializeGUIArcaneInfo();
 	}
 
@@ -78,8 +79,8 @@ public class ArcaneInfo extends JFrame {
 			public void actionPerformed(ActionEvent e) {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
-                        new MovieTicketBooking(customerID, MovieID, RoomName);
-			}
+                        new MovieTicketBooking(thanhvien, MovieID, RoomName);
+                  		}
 		});
 		btnNewButton.setBounds(366, 348, 158, 44);
 		contentPane.add(btnNewButton);
@@ -92,8 +93,7 @@ public class ArcaneInfo extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new DatVe(customerID);
-				
+				new DatVe(thanhvien);
 			}
 
 			
