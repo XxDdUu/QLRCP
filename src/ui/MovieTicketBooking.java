@@ -1,10 +1,22 @@
 package ui;
+
 import java.awt.BorderLayout;
+import model.Phim;
 import java.awt.Color;
+import java.awt.Desktop.Action;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,15 +26,55 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import model.ThanhVien;
+import dao.DatabaseOperation;
+import model.Phim;
+import model.ThanhVien;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Year;
+import java.util.ArrayList;
+
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 public class MovieTicketBooking extends JFrame {
 
     private final JButton[][] seatButtons = new JButton[5][5];
-    private final ArrayList<String> selectedSeats = new ArrayList<>();
+    private ArrayList<String> selectedSeats = new ArrayList<>();
     private final JLabel totalLabel = new JLabel("Total: 0 VND");
-    private final int seatPrice = 50000;
+    private int seatPrice = 50000;
+    private int totalPrice;
+    private ThanhVien thanhvien;
+    private String MovieID;
+    private Object[] movieProperties;
+    private String RoomName = "R";
+    private String IDRoom;
+    private List<String> bookedSeats;
+    
+    public MovieTicketBooking(ThanhVien thanhvien, String MovieID, String RoomName) {
+    	this.thanhvien = thanhvien;
+    	this.MovieID = MovieID;
+    	this.RoomName = RoomName;
+    	initializeBooking();
+    }
+    
 
-    public MovieTicketBooking() {
-        setTitle("Movie Ticket Booking");
+	private void initializeBooking() {
+		IDRoom = getIDRoom(RoomName);
+		bookedSeats = fetchBookedSeatsFromDatabase(IDRoom);
+        setTitle("Movie Ticket Booking" + " - " + RoomName);
         setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -36,8 +88,15 @@ public class MovieTicketBooking extends JFrame {
             for (int j = 0; j < 5; j++) {
                 String seatNumber = "R" + (i + 1) + "C" + (j + 1);
                 JButton seatButton = new JButton(seatNumber);
-                seatButton.setBackground(Color.LIGHT_GRAY);
-                seatButton.addActionListener(new SeatSelectionListener(seatNumber, seatButton));
+                
+                if (bookedSeats.contains(seatNumber)) {
+                	seatButton.setBackground(Color.RED);
+                	seatButton.setEnabled(false);
+                } else {
+                	seatButton.setBackground(Color.LIGHT_GRAY);
+                	seatButton.addActionListener(new SeatSelectionListener(seatNumber, seatButton));
+                }
+                
                 seatButtons[i][j] = seatButton;
                 seatPanel.add(seatButton);
             }
@@ -63,6 +122,7 @@ public class MovieTicketBooking extends JFrame {
         mainPanel.add(infoPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
+        setVisible(true);
     }
 
     private class SeatSelectionListener implements ActionListener {
@@ -88,33 +148,99 @@ public class MovieTicketBooking extends JFrame {
     }
 
     private void updateTotal() {
-        int total = selectedSeats.size() * seatPrice;
-        totalLabel.setText("Tổng: " + total + " VND");
+        totalPrice = selectedSeats.size() * seatPrice;
+        NumberFormat formatter = NumberFormat.getInstance();
+        totalLabel.setText("Tổng: " + formatter.format(totalPrice) + " VND");
     }
 
     private void confirmBooking() {
         if (selectedSeats.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa chọn ghế", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, "Booking confirmed for seats: " + selectedSeats, "Success", JOptionPane.INFORMATION_MESSAGE);
+//        	for (String seat : selectedSeats) {
+//        		handleBookingSeatStatus(seat);
+//        	}
+        	int result = JOptionPane.showConfirmDialog(this, "Booking confirmed for seats: " + selectedSeats, "Confirm", JOptionPane.OK_CANCEL_OPTION);
+        	if (result == JOptionPane.OK_OPTION) {
+        	totalPrice = (selectedSeats.size() * seatPrice);
+        	IDRoom = getIDRoom(RoomName);
+        	movieProperties = getMoviePropertiesFromDB(MovieID);
+        	String title = (String)movieProperties[0];
+        	String genre = (String)movieProperties[1];
+        	int duration = (int)movieProperties[2];
+        	Phim phim = new Phim(MovieID, title, genre, duration, null, null, null);
+        	new MovieTicketPropertiesDisplayBooking(thanhvien, phim, RoomName, IDRoom ,selectedSeats, totalPrice);
             dispose();
+        	}
         }
     }
 
     private void cancelBooking() {
         int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to cancel?", "Confirm", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
+            dispose();
+            new DatVe(thanhvien);
         }
-        dispose();
-        
     }
+    private String getIDRoom(String RoomName) {
+    	String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+        String dbUsername = "sa";
+        String dbPassword = "duy15122006";
+        String query = "  SELECT IDRoom from Room WHERE RoomName = ? ";
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        		PreparedStatement preparedStatement = connection.prepareStatement(query);
+        		){
+        		preparedStatement.setString(1, RoomName);
+        	ResultSet resultSet = preparedStatement.executeQuery();
+        	if (resultSet.next()) {
+        		return resultSet.getString("IDRoom");
+        	}
+        } catch (SQLException e) {
+        	JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+	}
+    private List<String> fetchBookedSeatsFromDatabase(String IDRoom){
+    	List<String> bookedSeats = new ArrayList<>();
+    	String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
+        String dbUsername = "sa";
+        String dbPassword = "duy15122006";
+        
+        String query = "SELECT SeatName From Seat Where SeatStatus = 'Booked' AND IDRoom = ?";
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        	 PreparedStatement preparedStatement = connection.prepareStatement(query);
+        		){
+        		preparedStatement.setString(1, IDRoom);
+        		ResultSet resultSet = preparedStatement.executeQuery();
+        		
+        	while (resultSet.next()) {
+        		bookedSeats.add(resultSet.getString("SeatName"));
+        		}
+        	} catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 
-    
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MovieTicketBooking bookingApp = new MovieTicketBooking();
-            bookingApp.setVisible(true);
-        });
+        	}
+        return bookedSeats;
+        }
+    private Object[] getMoviePropertiesFromDB(String MovieID) {
+    	Object[] movieProperties = null;
+        String query = "SELECT Title, Genre, Duration, release_date FROM Movie WHERE IDMovie = ?";
+        
+        try (Connection connection = DatabaseOperation.connectToDataBase()){
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);
+        	preparedStatement.setString(1, MovieID);
+        	ResultSet resultSet = preparedStatement.executeQuery();
+        		while (resultSet.next()) {
+        			String title = resultSet.getString("Title");
+        			String genre = resultSet.getString("Genre");
+        			int duration = resultSet.getInt("Duration");
+        			java.sql.Date release_date = resultSet.getDate("release_date");
+        			
+        			movieProperties = new Object[] {title, genre, duration, release_date};
+        		}
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Database error3: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return movieProperties;
     }
 }
