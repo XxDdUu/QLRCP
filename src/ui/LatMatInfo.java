@@ -22,11 +22,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import model.ThanhVien;
+
 public class LatMatInfo extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private String customerID;
+	private ThanhVien thanhvien;
 	private String Title = "Lật mặt 7";
 	private String Director = "Lý Hải";
 	private String RoomName = "RC";
@@ -34,8 +36,8 @@ public class LatMatInfo extends JFrame {
 	 * Launch the application.
 	 */
 	
-	public LatMatInfo(String customerID){
-		this.customerID = customerID;
+	public LatMatInfo(ThanhVien thanhvien){
+		this.thanhvien = thanhvien;
 		initializeGUILatMatInfo();
 	}
 
@@ -75,7 +77,7 @@ public class LatMatInfo extends JFrame {
 			public void actionPerformed(ActionEvent e) {
                         dispose();
                         String MovieID = getMovieID(Title, Director);
-                        new MovieTicketBooking(customerID, MovieID, RoomName);
+                        new MovieTicketBooking(thanhvien, MovieID, RoomName);
                         
 			}
 		});
@@ -90,7 +92,7 @@ public class LatMatInfo extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new DatVe(customerID);
+				new DatVe(thanhvien);
 			}
 
         });
