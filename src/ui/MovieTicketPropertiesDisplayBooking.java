@@ -33,6 +33,7 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
 	private String TicketStatus;
 	private final int Price;
 	private NumberFormat formatter = NumberFormat.getInstance();
+	private JComboBox<String> cbTicketStatus;
 		
 	
 	   
@@ -103,7 +104,7 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
         txtPrice.setEditable(false);
         JLabel lblTicketStatus = new JLabel("Thanh toán:");
         lblTicketStatus.setBounds(10, 291, 228, 30);
-        JComboBox<String> cbTicketStatus = new JComboBox<>(new String[]{"Thanh toán trực tuyến", "Tiền mặt"});
+        cbTicketStatus = new JComboBox<>(new String[]{"Thanh toán trực tuyến", "Tiền mặt"});
         cbTicketStatus.setBounds(248, 291, 228, 30);
         mainPanel.setLayout(null);
 
@@ -150,30 +151,90 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
         mainPanel.add(textField);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
-        // Hiển thị frame
         setVisible(true);
 	}
 
-	private void handleUpdateSeatStatus(String SeatNumber) {
-	        String query = "Update Seat SET SeatStatus = 'Booked' WHERE SeatName = ? ";
+	private void handleUpdateSeatStatus(String SeatNumber, int IDRoom) {
+	        String query = "Update Seat SET SeatStatus = 'Booked' WHERE SeatName = ? AND IDRoom = ?";
 
 	        try (Connection connection = DatabaseOperation.connectToDataBase();
 	        	PreparedStatement preparedStatement = connection.prepareStatement(query);	
 	        		){
 	        	preparedStatement.setString(1, SeatNumber);
+	        	preparedStatement.setInt(2, IDRoom);
 	        	preparedStatement.executeUpdate();
 	        } catch (SQLException e) {
 	            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 	        }
 	    }
-	private void insertDataIntoDatabase(int IDMovie, int IDRoom, int IDSeat, int IDCustomer, String TicketStatus, String price) {
-		
+	private void insertTicketDataIntoDatabase(int IDMovie, int IDRoom, Object[] IDSeats, int IDCustomer, int price) {
+		String sql = "INSERT INTO Ticket (IDMovie, IDRoom, IDSeat, IDCustomer, Price) VALUES (?, ?, ?, ?, ?)";
+		try (Connection connection = DatabaseOperation.connectToDataBase();
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);	
+				){
+			for (Object IDSeat : IDSeats) {
+			
+			preparedStatement.setInt(1, IDMovie);
+			preparedStatement.setInt(2, IDRoom);
+			preparedStatement.setObject(3, IDSeat);
+			preparedStatement.setInt(4, IDCustomer);
+			preparedStatement.setInt(5, price);
+			preparedStatement.addBatch();
+			}
+			preparedStatement.executeBatch();
+		} catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
+	private void UpdateTicketStatus(int IDCustomer) {
+		String sql = "UPDATE Ticket SET TicketStatus = 'Da Dat' WHERE IDCustomer = ? ";
+		try (Connection connection = DatabaseOperation.connectToDataBase();
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);){
+				preparedStatement.setInt(1, IDCustomer);
+				preparedStatement.executeUpdate();		
+				} catch (SQLException e) {
+		           JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+	}
+	private Object[] getIDSeats(ArrayList<String> selectedSeats, int IDRoom) {
+		String query = "SELECT IDSeat FROM Seat WHERE SeatName = ? AND IDRoom = ?";
+		ArrayList<Object> idSeats = new ArrayList<>();
+		try (Connection connection = DatabaseOperation.connectToDataBase();
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+				){
+				for (String seatName : selectedSeats) {
+					preparedStatement.setString(1, seatName);
+		            preparedStatement.setInt(2, IDRoom);
+		            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+		                while (resultSet.next()) {
+		                    idSeats.add(resultSet.getObject("IDSeat"));
+		                }
+		            }
+		        }
+		    } catch (SQLException e) {
+		           JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		    }
+		return idSeats.toArray();
+		}
 	
 	private void confirmBooking() {
+		int result = JOptionPane.showConfirmDialog(this, "Xác nhận đặt vé", "Xác nhận", JOptionPane.OK_CANCEL_OPTION);
+		if (result == JOptionPane.OK_OPTION) {
+		
 		for (String seat : selectedSeats) {
-			handleUpdateSeatStatus(seat);
-			
+			handleUpdateSeatStatus(seat, Integer.valueOf(IDRoom));
+		}
+		Object[] IDSeat = getIDSeats(selectedSeats, Integer.valueOf(IDRoom));
+			insertTicketDataIntoDatabase(Integer.valueOf(phim.getID()), Integer.valueOf(IDRoom), IDSeat, Integer.valueOf(thanhvien.getMATv()), Price);
+		String selectedPaymentMethod = (String)cbTicketStatus.getSelectedItem();
+		
+		if ("Thanh toán trực tuyến".equals(selectedPaymentMethod)) {
+			UpdateTicketStatus(Integer.valueOf(thanhvien.getMATv()));
+			JOptionPane.showMessageDialog(this, "Booking confirmed.", "Success", JOptionPane.INFORMATION_MESSAGE);
+			}
+		else if ("Tiền mặt".equals(selectedPaymentMethod)) {
+			JOptionPane.showMessageDialog(this, "Booking confirmed. Please pay in cash at the counter.", "Success", JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 	}
 }
