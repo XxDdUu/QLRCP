@@ -15,13 +15,13 @@ alter table Ticket add constraint fk_Movie_Ticket foreign key (IDMovie) referenc
 alter table Seat add constraint fk_Room_Seat foreign key (IDRoom) references Room(IDRoom) on delete cascade on update cascade;
 
 -- insert du lieu mau cho table Customer
-insert into Customer(CustomerName, CustomerPhoneNumber, CustomerType) values ('Duong', '0905040302', 'Nguoi Lon'), ('Hai', '0847576756', 'Tre em');
- select * from Customer;
+insert into Customer(CustomerName, CustomerPass, CustomerPhoneNumber, CustomerType) values ('Duong', '', '0905040302', 'Nguoi Lon'), ('Hai', 'Hai12345', '0847576756', 'Tre em');
+select * from Customer;
  
  -- insert du lieu mau cho table Staff
-insert into Staff(Staff_Name,Staff_Pass ) values ('@admin', '1234'), ('Bach', 'Bachnguyen54'), ('Duy', 'Duy15122006'), ('Tuat', 'Tuat12345');
+insert into Staff(Staff_Name,Staff_Pass ) values ('@adminBach', 'Bachnguyen54'), ('@adminDuy', 'Duy15122006'), ('@adminTuat', 'Tuat12345'), ('@adminThong', 'Thong12345');
 
---insert du leu cho movie
+
 INSERT INTO Movie (Title, Genre, Duration, Director,release_date, Moviedescrip )VALUES 
 	('Arcane', N'HĐ', 171, 'Pascal Charrue và Arnaud Delord', '2021/11/06',N' Arcane là loạt phim hoạt hình lấy
 bối cảnh vũ trụ League of Legends, kể về 
