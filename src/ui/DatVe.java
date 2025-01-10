@@ -20,16 +20,16 @@ import java.awt.event.FocusListener;
 import java.awt.Color;
 import javax.swing.Icon;
 import javax.swing.JScrollBar;
-
+import model.ThanhVien;
 public class DatVe extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	protected static final boolean False = false;
 	private JPanel contentPane;
-	private String customerID;
+	private ThanhVien thanhvien;
 
-	public DatVe(String customerID) {
-		this.customerID = customerID;
+	public DatVe(ThanhVien thanhvien) {
+		this.thanhvien = thanhvien;
 		initializeMainGui();
 	}
 	
@@ -97,10 +97,15 @@ public class DatVe extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (!thanhvien.getLoaiDoiTuong().equals("Tre em")) {
 				dispose();
-				new AvengerInfo(customerID);
+				new AvengerInfo(thanhvien);
+				}
+				else {
+					JOptionPane.showMessageDialog(DatVe.this, "You are under-aged. Please try another movie.", "Can not access this movie", JOptionPane.ERROR_MESSAGE);
+				}
 			}
-
+			
 			
 			
         });
@@ -115,7 +120,7 @@ public class DatVe extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new LatMatInfo(customerID);				
+				new LatMatInfo(thanhvien);				
 			}
         });
         
@@ -128,7 +133,7 @@ public class DatVe extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new ArcaneInfo(customerID);		
+				new ArcaneInfo(thanhvien);		
 			}
 		
 			
