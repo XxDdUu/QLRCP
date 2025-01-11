@@ -30,7 +30,6 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
 	private final String RoomName;
 	private final String IDRoom;
 	private final ArrayList<String> selectedSeats; // SeatNumber == SeatName
-	private String TicketStatus;
 	private final int Price;
 	private NumberFormat formatter = NumberFormat.getInstance();
 	private JComboBox<String> cbTicketStatus;
@@ -186,16 +185,6 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
             JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	private void UpdateTicketStatus(int IDCustomer) {
-		String sql = "UPDATE Ticket SET TicketStatus = 'Da Dat' WHERE IDCustomer = ? ";
-		try (Connection connection = DatabaseOperation.connectToDataBase();
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);){
-				preparedStatement.setInt(1, IDCustomer);
-				preparedStatement.executeUpdate();		
-				} catch (SQLException e) {
-		           JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-				}
-	}
 	private Object[] getIDSeats(ArrayList<String> selectedSeats, int IDRoom) {
 		String query = "SELECT IDSeat FROM Seat WHERE SeatName = ? AND IDRoom = ?";
 		ArrayList<Object> idSeats = new ArrayList<>();
@@ -229,7 +218,6 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
 		String selectedPaymentMethod = (String)cbTicketStatus.getSelectedItem();
 		
 		if ("Thanh toán trực tuyến".equals(selectedPaymentMethod)) {
-			UpdateTicketStatus(Integer.valueOf(thanhvien.getMATv()));
 			JOptionPane.showMessageDialog(this, "Booking confirmed.", "Success", JOptionPane.INFORMATION_MESSAGE);
 			}
 		else if ("Tiền mặt".equals(selectedPaymentMethod)) {
