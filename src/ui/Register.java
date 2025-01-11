@@ -5,13 +5,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
-import dao.THANHVIENDAO;
-import dao.THANHVIENDAOImpl;
 import dao.Constant;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import dao.DatabaseOperation;
 
 public class Register extends JFrame {
 
@@ -150,6 +150,10 @@ public class Register extends JFrame {
             JOptionPane.showMessageDialog(this, "Phone number must be 10 to 15 digits.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if (matchAnotherCustomerPhoneInDataBase(phone)) {
+        	JOptionPane.showMessageDialog(this, "Phone number already used. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        	return;
+        }
         String insertQuery;
         boolean isStaff = username.startsWith("@admin");
 
@@ -186,5 +190,25 @@ public class Register extends JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    private boolean matchAnotherCustomerPhoneInDataBase(String Phone) {
+    	boolean matchFound = false;
+    	String query = "SELECT COUNT(*) FROM Customer WHERE CustomerPhoneNumber = ?";
+    	
+    	try (Connection connection = DatabaseOperation.connectToDataBase();
+    		PreparedStatement preparedStatement = connection.prepareStatement(query);){
+    		
+    		preparedStatement.setString(1, Phone);
+    		ResultSet resultset = preparedStatement.executeQuery();
+    			if (resultset.next()) {
+    				int count = resultset.getInt(1);
+    				matchFound = count > 0;
+    			}
+    		}
+    	catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+    	}
+    	return matchFound;
     }
 }
