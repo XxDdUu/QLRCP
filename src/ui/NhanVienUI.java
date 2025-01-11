@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableCellRenderer;
@@ -35,7 +36,8 @@ public final class NhanVienUI extends JFrame {
     			int idcustomer = rs.getInt("IDCustomer");
     			java.sql.Date bookdate = rs.getDate("BookDate");
     			String ticketstatus = rs.getString("TicketStatus");
-    			double price = rs.getDouble("Price");
+    			DecimalFormat dec= new DecimalFormat("#,##0");
+    			String price = dec.format(rs.getDouble("Price"))+" đ";
     			ticketlist.add(new Object[] {idticket, idmovie, idroom, idseat, idcustomer, bookdate, ticketstatus, price});
     		}
     	} catch (Exception e) {
@@ -115,12 +117,15 @@ public final class NhanVienUI extends JFrame {
         ButtonPanelLayout.setLayout(new CardLayout());
         JPanel ButtonPanel = new JPanel();
         JPanel TicketButtonPanel = new JPanel();
-        TicketButtonPanel.setLayout(new GridLayout(2,4));
-        JButton vb1 = new JButton("Thêm vé");
+        TicketButtonPanel.setLayout(new GridLayout(2,1));
+        JPanel TicketButtonPanelSub= new JPanel();
+        TicketButtonPanelSub.setLayout(new GridLayout(1,2));
         JButton vb2 = new JButton("Tìm vé");
         JButton vb3 = new JButton("Xoá vé");
+        TicketButtonPanelSub.add(vb2); TicketButtonPanelSub.add(vb3);
+        TicketButtonPanel.add(TicketButtonPanelSub);
         JButton vb4 = new JButton("Sửa vé");
-        TicketButtonPanel.add(vb1); TicketButtonPanel.add(vb2); TicketButtonPanel.add(vb3); TicketButtonPanel.add(vb4);
+        TicketButtonPanel.add(vb4);
         ButtonPanelLayout.add(TicketButtonPanel);
         TicketButtonPanel.setVisible(false);
         ButtonPanel.setLayout(new GridLayout(2, 4));
@@ -362,50 +367,6 @@ public final class NhanVienUI extends JFrame {
         	ButtonPanel.setVisible(false);
         	ButtonPanelLayout.setVisible(true);
         	TicketButtonPanel.setVisible(true);
-        });
-        
-        vb1.addActionListener(e -> {
-        	JTextField idmovie = new JTextField();
-        	JTextField idroom = new JTextField();
-        	JTextField idseat = new JTextField();
-        	JTextField idcustomer = new JTextField();
-        	SpinnerDateModel datemodel = new SpinnerDateModel();
-        	JSpinner bookdate = new JSpinner(datemodel);
-        	bookdate.setEditor(new JSpinner.DateEditor(bookdate, "yyyy-MM-dd"));
-        	JTextField ticketstatus = new JTextField();
-        	JTextField price = new JTextField();
-        	Object[] input = {
-        			"ID phim", idmovie,
-        			"ID phòng", idroom,
-        			"ID chỗ ngồi", idseat,
-        			"ID khách hàng", idcustomer,
-        			"Ngày đặt", bookdate,
-        			"Trạng thái vé", ticketstatus,
-        			"Giá", price
-        	};
-        	int OK_option =JOptionPane.showConfirmDialog(this, input, "Thêm vé mới", JOptionPane.OK_CANCEL_OPTION);
-        	if (OK_option == JOptionPane.OK_OPTION) {
-        		try (Connection connection = DatabaseOperation.connectToDataBase()){
-        			String sql = "Insert into Ticket(IDMovie, IDRoom, IDSeat, IDCustomer, BookDate, TicketStatus, Price) values (?, ?, ?, ?, ?, ?, ?);";
-        			try (PreparedStatement stmt = connection.prepareStatement(sql)){
-        				stmt.setInt(1, Integer.parseInt(idmovie.getText()));
-        				stmt.setInt(2, Integer.parseInt(idroom.getText()));
-        				stmt.setInt(3, Integer.parseInt(idseat.getText()));
-        				stmt.setInt(4, Integer.parseInt(idcustomer.getText()));
-        				java.util.Date date = (java.util.Date) bookdate.getValue();
-        				stmt.setDate(5, new java.sql.Date(date.getTime()));
-        				stmt.setString(6, ticketstatus.getText());
-        				stmt.setDouble(7, Double.parseDouble(price.getText()));
-        				stmt.execute();
-        				UpdateTicketList(t3);
-        			} catch (Exception er) {
-        				er.printStackTrace();
-        			}
-        		} catch (SQLException | NumberFormatException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Lỗi khi thêm vé mới!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
-        	}
         });
     }
     public static void main(String[] args) {
