@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
 
 
 public final class NhanVienUI extends JFrame {
     public NhanVienUI() {
         super("Quản Lí");
+        setBackground(new Color(255, 255, 255));
         initUI();
     }
     private Object[][] loadTicketDataFromDatabase(){
@@ -47,7 +49,12 @@ public final class NhanVienUI extends JFrame {
     private void UpdateTicketList(JTable t3) {
     	Object[][] ticketlist = loadTicketDataFromDatabase();
     	DefaultTableModel tblmodel3= new DefaultTableModel(ticketlist, new Object[] {"ID vé", "ID phim", "ID phòng", "ID chỗ ngồi", "ID khách hàng", "Ngày đặt", "Trạng thái vé", "Giá"});
-    	t3.setModel(tblmodel3);
+    	DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
+        t3.setModel(tblmodel3);
+        for (int i=0; i<t3.getColumnCount(); i++) {
+            t3.getColumnModel().getColumn(i).setCellRenderer(dtcr);
+        }
     }
     private Object[][] loadMovieDataFromDatabase() {
         ArrayList<Object[]> movielist = new ArrayList<>();
@@ -77,7 +84,12 @@ public final class NhanVienUI extends JFrame {
         Object[][] phimdatatab = loadMovieDataFromDatabase();
         DefaultTableModel tblmodel2 = new DefaultTableModel(phimdatatab, new String[]{"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim",
                 "Đạo diễn", "Ngày phát hành", "Miêu tả"});
+        DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
         t2.setModel(tblmodel2);
+        for (int i=0; i<t2.getColumnCount(); i++) {
+            t2.getColumnModel().getColumn(i).setCellRenderer(dtcr);
+        }
     }
     private Object[][] loadCustomerFromDatabase() {
         ArrayList<Object[]> CustomerList = new ArrayList<>();
@@ -104,14 +116,19 @@ public final class NhanVienUI extends JFrame {
         this.setSize(1000, 800);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
         JPanel p1= new JPanel();
+        p1.setBackground(new Color(0, 255, 128));
         p1.setLayout(new GridLayout(1,3));
         JButton b1= new JButton("Khách hàng");
+        b1.setBackground(new Color(255, 255, 128));
+        b1.setForeground(new Color(0, 0, 0));
         JButton b2= new JButton("Phim");
+        b2.setBackground(new Color(255, 255, 128));
         JButton b7= new JButton("Vé");
+        b7.setBackground(new Color(255, 255, 128));
         p1.add(b1); p1.add(b2); p1.add(b7);
-        this.add(p1, BorderLayout.NORTH);
+        getContentPane().add(p1, BorderLayout.NORTH);
         JPanel ButtonPanelLayout = new JPanel();
         ButtonPanelLayout.setLayout(new CardLayout());
         JPanel ButtonPanel = new JPanel();
@@ -120,8 +137,11 @@ public final class NhanVienUI extends JFrame {
         JPanel TicketButtonPanelSub= new JPanel();
         TicketButtonPanelSub.setLayout(new GridLayout(1,2));
         JButton vb2 = new JButton("Tìm vé");
+        vb2.setBackground(new Color(192, 192, 192));
         JButton vb3 = new JButton("Xoá vé");
+        vb3.setBackground(new Color(192, 192, 192));
         JButton vb4 = new JButton("Sửa vé");
+        vb4.setBackground(new Color(192, 192, 192));
         TicketButtonPanelSub.add(vb2);
         TicketButtonPanelSub.add(vb3);
         TicketButtonPanel.add(TicketButtonPanelSub);
@@ -130,15 +150,19 @@ public final class NhanVienUI extends JFrame {
         TicketButtonPanel.setVisible(false);
         ButtonPanel.setLayout(new GridLayout(2, 4));
         JButton b3 = new JButton("Thêm phim");
+        b3.setBackground(new Color(192, 192, 192));
         JButton b4 = new JButton("Tìm phim");
+        b4.setBackground(new Color(192, 192, 192));
         JButton b5 = new JButton("Xoá phim");
+        b5.setBackground(new Color(192, 192, 192));
         JButton b6 = new JButton("Sửa phim");
+        b6.setBackground(new Color(192, 192, 192));
         ButtonPanel.add(b3);
         ButtonPanel.add(b4);
         ButtonPanel.add(b5);
         ButtonPanel.add(b6);
         ButtonPanelLayout.add(ButtonPanel);
-        this.add(ButtonPanelLayout, BorderLayout.SOUTH);
+        getContentPane().add(ButtonPanelLayout, BorderLayout.SOUTH);
         ButtonPanelLayout.setVisible(false);
         ButtonPanel.setVisible(false);
         Object[][] vedatatab = loadTicketDataFromDatabase();
@@ -170,7 +194,7 @@ public final class NhanVienUI extends JFrame {
         JPanel p2= new JPanel();
         p2.setLayout(new CardLayout());
         p2.add(sp1); p2.add(sp2); p2.add(sp3);
-        this.add(p2, BorderLayout.CENTER);
+        getContentPane().add(p2, BorderLayout.CENTER);
         b1.addActionListener((ActionEvent e)-> {
             sp1.setVisible(true);
             sp2.setVisible(false);
@@ -370,7 +394,7 @@ public final class NhanVienUI extends JFrame {
         });
 
         vb2.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhap IDVe ban muon tim" );
+            String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn tìm" );
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
                     String sql = "Select * from Ticket where IDTicket = ?;";
@@ -378,19 +402,18 @@ public final class NhanVienUI extends JFrame {
                         stmt.setInt(1, Integer.parseInt(key));
                         try (ResultSet rs = stmt.executeQuery()){
                             if (rs.next()) {
-                                StringBuilder result = new StringBuilder("Thong tin Ve: \n");
-                                result.append("ID Ve: ").append(rs.getInt("IDTicket")).append("\n")
-                                        .append("ID Phim: ").append(rs.getInt("IDMovie")).append("\n")
-                                        .append("ID Phong: ").append(rs.getInt("IDRoom")).append("\n")
-                                        .append("ID Ghe: ").append(rs.getInt("IDSeat")).append("\n")
-                                        .append("ID Khach Hang: ").append(rs.getInt("IDCustomer")).append("\n")
-                                        .append("ID Ve: ").append(rs.getInt("IDTicket")).append("\n")
-                                        .append("Ngay Dat: ").append(rs.getInt("BookDate")).append("\n")
-                                        .append("Trang thai: ").append(rs.getInt("TicketStatus")).append("\n")
-                                        .append("Gia: ").append(rs.getInt("Price")).append(" đ\n");
+                                StringBuilder result = new StringBuilder("Thông tin vé: \n");
+                                result.append("ID vé: ").append(rs.getInt("IDTicket")).append("\n")
+                                        .append("ID phim: ").append(rs.getInt("IDMovie")).append("\n")
+                                        .append("ID phòng: ").append(rs.getInt("IDRoom")).append("\n")
+                                        .append("ID chỗ ngồi: ").append(rs.getInt("IDSeat")).append("\n")
+                                        .append("ID khách hàng: ").append(rs.getInt("IDCustomer")).append("\n")
+                                        .append("Ngày đặt: ").append(rs.getDate("BookDate")).append("\n")
+                                        .append("Trạng thái: ").append(rs.getString("TicketStatus")).append("\n")
+                                        .append("Giá: ").append(rs.getInt("Price")).append(" đ\n");
                                 JOptionPane.showMessageDialog(this, result.toString());
                             } else {
-                                JOptionPane.showMessageDialog(this, "Khong tim thay ID ve!");
+                                JOptionPane.showMessageDialog(this, "Không tìm thấy ID vé!");
                             }
                         }
                     }
@@ -400,7 +423,7 @@ public final class NhanVienUI extends JFrame {
             }
         });
         vb3.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhap ID ve muon xoa: ");
+            String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn xóa: ");
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
                     String sql = "Delete from Ticket where IDTicket = ?";
@@ -408,9 +431,10 @@ public final class NhanVienUI extends JFrame {
                         stmt.setInt(1, Integer.parseInt(key));
                         int rowsAffected = stmt.executeUpdate();
                         if (rowsAffected > 0) {
-                            JOptionPane.showMessageDialog(this, "Xoa thanh cong!");
+                            JOptionPane.showMessageDialog(this, "Xóa thành công!");
+                            UpdateTicketList(t3);
                         } else {
-                            JOptionPane.showMessageDialog(this, "Xoa khong thanh cong!");
+                            JOptionPane.showMessageDialog(this, "Xóa không thành công!");
                         }
                     }
                 } catch (SQLException ex) {
@@ -420,7 +444,7 @@ public final class NhanVienUI extends JFrame {
             }
         });
         vb4.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhap IDVe muon sua: ");
+            String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn sửa: ");
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
                     String sql = "Select * from Ticket where IDTicket =?";
