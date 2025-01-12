@@ -3,7 +3,7 @@ package model;
 import java.time.Year;
 
 public class Phim {
-	private int MaP;
+	private String MaP;
 	private String TenP;
 	private String Theloai;
 	private int thoiluong;
@@ -11,21 +11,11 @@ public class Phim {
 	private String daodien;
 	private String mota;
 
-	public Phim(int maP, String tenP, String theloai, int thoiluong, Year namSX, String daodien, String mota) {
-		MaP = maP;
-		TenP = tenP;
-		Theloai = theloai;
-		this.thoiluong = thoiluong;
-		NamSX = namSX;
-		this.daodien = daodien;
-		this.mota = mota;
-	}
-
-	public int getMaP() {
+	public String getMaP() {
 		return MaP;
 	}
 
-	public void setMaP(int maP) {
+	public void setMaP(String maP) {
 		MaP = maP;
 	}
 
@@ -74,6 +64,16 @@ public class Phim {
 	}
 
 	public void setMota(String mota) {
+		this.mota = mota;
+	}
+
+	public Phim(String maP, String tenP, String theloai, int thoiluong, Year namSX, String daodien, String mota) {
+		MaP = maP;
+		TenP = tenP;
+		Theloai = theloai;
+		this.thoiluong = thoiluong;
+		NamSX = namSX;
+		this.daodien = daodien;
 		this.mota = mota;
 	}
 }
