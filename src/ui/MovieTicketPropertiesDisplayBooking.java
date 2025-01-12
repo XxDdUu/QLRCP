@@ -69,19 +69,19 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
         JLabel lblTenPhim = new JLabel("Tên Phim:");
         lblTenPhim.setBounds(10, 51, 228, 30);
         JTextField txtTenPhim = new JTextField();
-        txtTenPhim.setText(phim.getTitle());
+        txtTenPhim.setText(phim.getTenP());
         txtTenPhim.setBounds(248, 51, 228, 30);
         txtTenPhim.setEditable(false);
         JLabel lblThoiluong = new JLabel("Thời lượng:");
         lblThoiluong.setBounds(10, 91, 228, 30);
         JTextField txtThoiluong = new JTextField();
-        txtThoiluong.setText(String.valueOf(phim.getDuration()) + " phút");
+        txtThoiluong.setText(String.valueOf(phim.getThoiluong()) + " phút");
         txtThoiluong.setBounds(248, 91, 228, 30);
         txtThoiluong.setEditable(false);
         JLabel lblTheloai = new JLabel("Thể loại:");
         lblTheloai.setBounds(10, 131, 228, 30);
         JTextField txtTheloai= new JTextField();
-        txtTheloai.setText(phim.getGenre());
+        txtTheloai.setText(phim.getTheloai());
         txtTheloai.setBounds(248, 131, 228, 30);
         txtTheloai.setEditable(false);
         JLabel lblVitrighe = new JLabel("Vị trí ghế:"); //Seatname
@@ -208,7 +208,7 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
 		if (result == JOptionPane.OK_OPTION) {
 		
 		Object[] IDSeat = getIDSeats(selectedSeats, Integer.valueOf(IDRoom));
-			insertTicketDataIntoDatabase(Integer.valueOf(phim.getID()), Integer.valueOf(IDRoom), IDSeat, Integer.valueOf(thanhvien.getMATv()), Price);
+			insertTicketDataIntoDatabase(Integer.valueOf(phim.getMaP()), Integer.valueOf(IDRoom), IDSeat, Integer.valueOf(thanhvien.getMATv()), Price);
 		String selectedPaymentMethod = (String)cbTicketStatus.getSelectedItem();
 		
 		if ("Thanh toán trực tuyến".equals(selectedPaymentMethod)) {
