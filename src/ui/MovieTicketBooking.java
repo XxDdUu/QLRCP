@@ -3,25 +3,52 @@ package ui;
 import java.awt.BorderLayout;
 import model.Phim;
 import java.awt.Color;
+import java.awt.Desktop.Action;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 import model.ThanhVien;
 import dao.DatabaseOperation;
+import model.Phim;
+import model.ThanhVien;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Year;
+import java.util.ArrayList;
+
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.xml.crypto.Data;
 
 public class MovieTicketBooking extends JFrame {
 
@@ -33,7 +60,7 @@ public class MovieTicketBooking extends JFrame {
     private ThanhVien thanhvien;
     private String MovieID;
     private Object[] movieProperties;
-    private String RoomName = "R";
+    private String RoomName;
     private String IDRoom;
     private List<String> bookedSeats;
     
@@ -48,7 +75,7 @@ public class MovieTicketBooking extends JFrame {
 	private void initializeBooking() {
 		IDRoom = getIDRoom(RoomName);
 		bookedSeats = fetchBookedSeatsFromDatabase(IDRoom);
-        setTitle("Movie Ticket Booking" + " - " + RoomName);
+        setTitle("Seats Cho" + " - " + RoomName);
         setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -97,6 +124,11 @@ public class MovieTicketBooking extends JFrame {
 
         add(mainPanel);
         setVisible(true);
+        if (RoomIsFulled(RoomName)) {
+        	JOptionPane.showMessageDialog(this, "Room is fulled. Please try later.", "Room", JOptionPane.ERROR_MESSAGE);
+        	dispose();
+        	new DatVe(thanhvien);
+        }
     }
 
     private class SeatSelectionListener implements ActionListener {
@@ -173,7 +205,6 @@ public class MovieTicketBooking extends JFrame {
 	}
     private List<String> fetchBookedSeatsFromDatabase(String IDRoom){
     	List<String> bookedSeats = new ArrayList<>();
-        
         String query = "SELECT SeatName From Seat Where SeatStatus = 'Booked' AND IDRoom = ?";
         try (Connection connection = DatabaseOperation.connectToDataBase();
         	 PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -210,5 +241,25 @@ public class MovieTicketBooking extends JFrame {
             JOptionPane.showMessageDialog(null, "Database error3: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return movieProperties;
+    }
+    private boolean RoomIsFulled(String RoomName) {
+    	boolean Fulled;
+    	String query = "SELECT RoomStatus from Room Where RoomName = ?";
+    	try (Connection connection = DatabaseOperation.connectToDataBase();
+    		PreparedStatement preparedStatement = connection.prepareStatement(query);){
+    			preparedStatement.setString(1, RoomName);
+    			ResultSet resultSet = preparedStatement.executeQuery();
+    			if (resultSet.next()) {
+    				String result = resultSet.getString("RoomStatus");
+    				if (result.equals("Het cho")) {
+    					Fulled = true;
+    					return Fulled;
+    				}
+    			}
+    	}
+    	catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Database error3: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);	
+    	}
+    	return false;
     }
 }
