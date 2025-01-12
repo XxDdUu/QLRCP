@@ -3,51 +3,25 @@ package ui;
 import java.awt.BorderLayout;
 import model.Phim;
 import java.awt.Color;
-import java.awt.Desktop.Action;
 import java.awt.GridLayout;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
 import model.ThanhVien;
 import dao.DatabaseOperation;
-import model.Phim;
-import model.ThanhVien;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Year;
-import java.util.ArrayList;
-
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public class MovieTicketBooking extends JFrame {
 
@@ -183,11 +157,8 @@ public class MovieTicketBooking extends JFrame {
         }
     }
     private String getIDRoom(String RoomName) {
-    	String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-        String dbUsername = "sa";
-        String dbPassword = "duy15122006";
         String query = "  SELECT IDRoom from Room WHERE RoomName = ? ";
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        try (Connection connection = DatabaseOperation.connectToDataBase();
         		PreparedStatement preparedStatement = connection.prepareStatement(query);
         		){
         		preparedStatement.setString(1, RoomName);
@@ -202,12 +173,9 @@ public class MovieTicketBooking extends JFrame {
 	}
     private List<String> fetchBookedSeatsFromDatabase(String IDRoom){
     	List<String> bookedSeats = new ArrayList<>();
-    	String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-        String dbUsername = "sa";
-        String dbPassword = "duy15122006";
         
         String query = "SELECT SeatName From Seat Where SeatStatus = 'Booked' AND IDRoom = ?";
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        try (Connection connection = DatabaseOperation.connectToDataBase();
         	 PreparedStatement preparedStatement = connection.prepareStatement(query);
         		){
         		preparedStatement.setString(1, IDRoom);
