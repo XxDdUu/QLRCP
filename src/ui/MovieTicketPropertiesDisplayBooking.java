@@ -208,15 +208,21 @@ public class MovieTicketPropertiesDisplayBooking extends JFrame {
 		if (result == JOptionPane.OK_OPTION) {
 		
 		Object[] IDSeat = getIDSeats(selectedSeats, Integer.valueOf(IDRoom));
-			insertTicketDataIntoDatabase(Integer.valueOf(phim.getMaP()), Integer.valueOf(IDRoom), IDSeat, Integer.valueOf(thanhvien.getMATv()), Price);
+        insertTicketDataIntoDatabase(Integer.valueOf(phim.getMaP()),
+                Integer.valueOf(IDRoom),
+                IDSeat,
+                Integer.valueOf(thanhvien.getMATv()),
+                Price);
 		String selectedPaymentMethod = (String)cbTicketStatus.getSelectedItem();
 		
 		if ("Thanh toán trực tuyến".equals(selectedPaymentMethod)) {
 			UpdateTicketStatus(Integer.valueOf(thanhvien.getMATv()));
 			JOptionPane.showMessageDialog(this, "Booking confirmed.", "Success", JOptionPane.INFORMATION_MESSAGE);
-			}
+            new DatVe(thanhvien);
+        }
 		else if ("Tiền mặt".equals(selectedPaymentMethod)) {
 			JOptionPane.showMessageDialog(this, "Booking confirmed. Please pay in cash at the counter.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            new DatVe(thanhvien);
 			}
 		}
 	}
