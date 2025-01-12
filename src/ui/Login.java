@@ -192,9 +192,6 @@ public class Login extends JFrame {
 	}
         
         private boolean validateCredentials(String username, String password) {
-            String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-            String dbUsername = "sa";
-            String dbPassword = "duy15122006";
             String query;
             
             if (username.startsWith("@admin")) {
@@ -204,7 +201,7 @@ public class Login extends JFrame {
                 // Customer logins
                  query = "SELECT * FROM customer WHERE CustomerName = ? AND CustomerPass = ?";
             }  
-            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            try (Connection connection = DatabaseOperation.connectToDataBase();
                  PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
                 preparedStatement.setString(1, username);
@@ -222,12 +219,9 @@ public class Login extends JFrame {
             return false;
         	}
         private String getCustomerId(String username, String password) {
-            String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-            String dbUsername = "sa";
-            String dbPassword = "duy15122006";
             String query = "SELECT IDCustomer FROM customer WHERE CustomerName = ? AND CustomerPass = ?";
             
-            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            try (Connection connection = DatabaseOperation.connectToDataBase();
                  PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
                 preparedStatement.setString(1, username);
@@ -245,13 +239,9 @@ public class Login extends JFrame {
             return null;
         }
         private String getUserType(String customerID) {
-    		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-            String dbUsername = "sa";
-            String dbPassword = "duy15122006";
-            
             String query = "SELECT CustomerType FROM Customer Where IDCustomer = ?";
             
-            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            try (Connection connection = DatabaseOperation.connectToDataBase();
     	        	PreparedStatement preparedStatement = connection.prepareStatement(query);	
     	        		){
             	preparedStatement.setString(1, customerID);
@@ -267,13 +257,9 @@ public class Login extends JFrame {
             return null;
     	}
         private String getUserPhone(String customerID) {
-    		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-            String dbUsername = "sa";
-            String dbPassword = "duy15122006";
-            
             String query = "SELECT CustomerPhoneNumber FROM Customer Where IDCustomer = ?";
             
-            try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+            try (Connection connection = DatabaseOperation.connectToDataBase();
     	        	PreparedStatement preparedStatement = connection.prepareStatement(query);	
     	        		){
             	preparedStatement.setString(1, customerID);
