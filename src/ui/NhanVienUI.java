@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -122,9 +121,10 @@ public final class NhanVienUI extends JFrame {
         TicketButtonPanelSub.setLayout(new GridLayout(1,2));
         JButton vb2 = new JButton("Tìm vé");
         JButton vb3 = new JButton("Xoá vé");
-        TicketButtonPanelSub.add(vb2); TicketButtonPanelSub.add(vb3);
-        TicketButtonPanel.add(TicketButtonPanelSub);
         JButton vb4 = new JButton("Sửa vé");
+        TicketButtonPanelSub.add(vb2);
+        TicketButtonPanelSub.add(vb3);
+        TicketButtonPanel.add(TicketButtonPanelSub);
         TicketButtonPanel.add(vb4);
         ButtonPanelLayout.add(TicketButtonPanel);
         TicketButtonPanel.setVisible(false);
@@ -367,6 +367,125 @@ public final class NhanVienUI extends JFrame {
         	ButtonPanel.setVisible(false);
         	ButtonPanelLayout.setVisible(true);
         	TicketButtonPanel.setVisible(true);
+        });
+
+        vb2.addActionListener(e -> {
+            String key = JOptionPane.showInputDialog(this, "Nhap IDVe ban muon tim" );
+            if (key != null && !key.trim().isEmpty()) {
+                try (Connection connection = DatabaseOperation.connectToDataBase()){
+                    String sql = "Select * from Ticket where IDTicket = ?;";
+                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
+                        stmt.setInt(1, Integer.parseInt(key));
+                        try (ResultSet rs = stmt.executeQuery()){
+                            if (rs.next()) {
+                                StringBuilder result = new StringBuilder("Thong tin Ve: \n");
+                                result.append("ID Ve: ").append(rs.getInt("IDTicket")).append("\n")
+                                        .append("ID Phim: ").append(rs.getInt("IDMovie")).append("\n")
+                                        .append("ID Phong: ").append(rs.getInt("IDRoom")).append("\n")
+                                        .append("ID Ghe: ").append(rs.getInt("IDSeat")).append("\n")
+                                        .append("ID Khach Hang: ").append(rs.getInt("IDCustomer")).append("\n")
+                                        .append("ID Ve: ").append(rs.getInt("IDTicket")).append("\n")
+                                        .append("Ngay Dat: ").append(rs.getInt("BookDate")).append("\n")
+                                        .append("Trang thai: ").append(rs.getInt("TicketStatus")).append("\n")
+                                        .append("Gia: ").append(rs.getInt("Price")).append(" đ\n");
+                                JOptionPane.showMessageDialog(this, result.toString());
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Khong tim thay ID ve!");
+                            }
+                        }
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        vb3.addActionListener(e -> {
+            String key = JOptionPane.showInputDialog(this, "Nhap ID ve muon xoa: ");
+            if (key != null && !key.trim().isEmpty()) {
+                try (Connection connection = DatabaseOperation.connectToDataBase()){
+                    String sql = "Delete from Ticket where IDTicket = ?";
+                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
+                        stmt.setInt(1, Integer.parseInt(key));
+                        int rowsAffected = stmt.executeUpdate();
+                        if (rowsAffected > 0) {
+                            JOptionPane.showMessageDialog(this, "Xoa thanh cong!");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xoa khong thanh cong!");
+                        }
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Lỗi khi xoá vé!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        vb4.addActionListener(e -> {
+            String key = JOptionPane.showInputDialog(this, "Nhap IDVe muon sua: ");
+            if (key != null && !key.trim().isEmpty()) {
+                try (Connection connection = DatabaseOperation.connectToDataBase()){
+                    String sql = "Select * from Ticket where IDTicket =?";
+                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
+                        stmt.setInt(1, Integer.parseInt(key));
+                        try (ResultSet rs = stmt.executeQuery()){
+                            if (rs.next()) {
+                                int currentIDMovie = rs.getInt("IDMovie");
+                                int currentIDRoom = rs.getInt("IDRoom");
+                                int currentIDSeat = rs.getInt("IDSeat");
+                                int currentIDCustomer = rs.getInt("IDCustomer");
+                                Date currentBookDate = rs.getDate("BookDate");
+                                String currentTicketStatus = rs.getString("TicketStatus");
+                                double currentPrice = rs.getDouble("Price");
+
+                                JTextField idMovie = new JTextField(String.valueOf(currentIDMovie));
+                                JTextField idRoom = new JTextField(String.valueOf(currentIDRoom));
+                                JTextField idSeat = new JTextField(String.valueOf(currentIDSeat));
+                                JTextField idCustomer = new JTextField(String.valueOf(currentIDCustomer));
+                                JSpinner bookDate = new JSpinner(new SpinnerDateModel(currentBookDate, null, null, java.util.Calendar.DAY_OF_MONTH));
+                                bookDate.setEditor(new JSpinner.DateEditor(bookDate, "yyyy-MM-dd"));
+                                JTextField ticketStatus = new JTextField(currentTicketStatus);
+                                JTextField price = new JTextField(String.valueOf(currentPrice));
+
+                                Object[] inputFields = {
+                                        "ID Phim:", idMovie,
+                                        "ID Phòng:", idRoom,
+                                        "ID Chỗ Ngồi:", idSeat,
+                                        "ID Khách Hàng:", idCustomer,
+                                        "Ngày Đặt Vé:", bookDate,
+                                        "Trạng Thái Vé:", ticketStatus,
+                                        "Giá Vé:", price
+                                };
+
+                                int option = JOptionPane.showConfirmDialog(this, inputFields, "Sua thong tin ve: ", JOptionPane.OK_CANCEL_OPTION);
+                                if (option == JOptionPane.OK_OPTION) {
+                                    String UpdateSql = "Update Ticket set IDMovie = ?, IDRoom = ?, IDSeat = ?, IDCustomer = ?, BookDate = ?, TicketStatus = ?, Price = ? where IDTicket =?";
+                                    try (PreparedStatement stmt2 = connection.prepareStatement(UpdateSql)){
+                                        stmt2.setInt(1, Integer.parseInt(idMovie.getText()));
+                                        stmt2.setInt(2, Integer.parseInt(idRoom.getText()));
+                                        stmt2.setInt(3, Integer.parseInt(idSeat.getText()));
+                                        stmt2.setInt(4, Integer.parseInt(idCustomer.getText()));
+                                        java.util.Date date = (java.util.Date) bookDate.getValue();
+                                        stmt2.setDate(5, new java.sql.Date(date.getTime()));
+                                        stmt2.setString(6, ticketStatus.getText());
+                                        stmt2.setDouble(7, Double.parseDouble(price.getText()));
+                                        stmt2.setInt(8, Integer.parseInt(key));
+
+                                        int rowsAffected = stmt2.executeUpdate();
+                                        if (rowsAffected > 0) {
+                                            JOptionPane.showMessageDialog(this, "Sửa vé thành công!");
+                                            UpdateTicketList(t3); // Cập nhật lại danh sách vé
+                                        } else {
+                                            JOptionPane.showMessageDialog(this, "Không tìm thấy vé để sửa!");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Loi khi sua ve", "Loi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         });
     }
     public static void main(String[] args) {
