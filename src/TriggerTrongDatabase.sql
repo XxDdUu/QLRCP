@@ -1,15 +1,26 @@
 use Movie
--- Chuyển SeatStatus thành 'Booked' khi thêm vé mới
+-- Chuyển SeatStatus thành 'Booked' khi thêm vé mới và 'Available' khi xoá vé cũ
 CREATE TRIGGER UpdateSeatStatus
 ON Ticket
-AFTER INSERT
+AFTER INSERT, DELETE
 AS
 BEGIN
-    UPDATE Seat
-    SET SeatStatus = 'Booked'
-    FROM Seat
-    INNER JOIN Inserted i
-    ON Seat.IDSeat = i.IDSeat;
+    IF EXISTS (SELECT * FROM Inserted)
+    BEGIN
+        UPDATE Seat
+        SET SeatStatus = 'Booked'
+        FROM Seat
+        INNER JOIN Inserted i
+        ON Seat.IDSeat = i.IDSeat;
+    END;
+    IF EXISTS (SELECT * FROM Deleted)
+    BEGIN
+        UPDATE Seat
+        SET SeatStatus = 'Available'
+        FROM Seat
+        INNER JOIN Deleted d
+        ON Seat.IDSeat = d.IDSeat;
+    END;
 END;
 GO
 -- Cập nhật RoomStatus thành 'Het cho' khi chỗ ngồi >= 25 và 'Con trong' khi ngược lại
