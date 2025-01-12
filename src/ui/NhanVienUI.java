@@ -49,7 +49,12 @@ public final class NhanVienUI extends JFrame {
     private void UpdateTicketList(JTable t3) {
     	Object[][] ticketlist = loadTicketDataFromDatabase();
     	DefaultTableModel tblmodel3= new DefaultTableModel(ticketlist, new Object[] {"ID vé", "ID phim", "ID phòng", "ID chỗ ngồi", "ID khách hàng", "Ngày đặt", "Trạng thái vé", "Giá"});
-    	t3.setModel(tblmodel3);
+    	DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
+        t3.setModel(tblmodel3);
+        for (int i=0; i<t3.getColumnCount(); i++) {
+            t3.getColumnModel().getColumn(i).setCellRenderer(dtcr);
+        }
     }
     private Object[][] loadMovieDataFromDatabase() {
         ArrayList<Object[]> movielist = new ArrayList<>();
@@ -79,7 +84,12 @@ public final class NhanVienUI extends JFrame {
         Object[][] phimdatatab = loadMovieDataFromDatabase();
         DefaultTableModel tblmodel2 = new DefaultTableModel(phimdatatab, new String[]{"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim",
                 "Đạo diễn", "Ngày phát hành", "Miêu tả"});
+        DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
         t2.setModel(tblmodel2);
+        for (int i=0; i<t2.getColumnCount(); i++) {
+            t2.getColumnModel().getColumn(i).setCellRenderer(dtcr);
+        }
     }
     private Object[][] loadCustomerFromDatabase() {
         ArrayList<Object[]> CustomerList = new ArrayList<>();
@@ -384,7 +394,7 @@ public final class NhanVienUI extends JFrame {
         });
 
         vb2.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhap IDVe ban muon tim" );
+            String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn tìm" );
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
                     String sql = "Select * from Ticket where IDTicket = ?;";
@@ -392,19 +402,18 @@ public final class NhanVienUI extends JFrame {
                         stmt.setInt(1, Integer.parseInt(key));
                         try (ResultSet rs = stmt.executeQuery()){
                             if (rs.next()) {
-                                StringBuilder result = new StringBuilder("Thong tin Ve: \n");
-                                result.append("ID Ve: ").append(rs.getInt("IDTicket")).append("\n")
-                                        .append("ID Phim: ").append(rs.getInt("IDMovie")).append("\n")
-                                        .append("ID Phong: ").append(rs.getInt("IDRoom")).append("\n")
-                                        .append("ID Ghe: ").append(rs.getInt("IDSeat")).append("\n")
-                                        .append("ID Khach Hang: ").append(rs.getInt("IDCustomer")).append("\n")
-                                        .append("ID Ve: ").append(rs.getInt("IDTicket")).append("\n")
-                                        .append("Ngay Dat: ").append(rs.getDate("BookDate")).append("\n")
-                                        .append("Trang thai: ").append(rs.getString("TicketStatus")).append("\n")
-                                        .append("Gia: ").append(rs.getInt("Price")).append(" đ\n");
+                                StringBuilder result = new StringBuilder("Thông tin vé: \n");
+                                result.append("ID vé: ").append(rs.getInt("IDTicket")).append("\n")
+                                        .append("ID phim: ").append(rs.getInt("IDMovie")).append("\n")
+                                        .append("ID phòng: ").append(rs.getInt("IDRoom")).append("\n")
+                                        .append("ID chỗ ngồi: ").append(rs.getInt("IDSeat")).append("\n")
+                                        .append("ID khách hàng: ").append(rs.getInt("IDCustomer")).append("\n")
+                                        .append("Ngày đặt: ").append(rs.getDate("BookDate")).append("\n")
+                                        .append("Trạng thái: ").append(rs.getString("TicketStatus")).append("\n")
+                                        .append("Giá: ").append(rs.getInt("Price")).append(" đ\n");
                                 JOptionPane.showMessageDialog(this, result.toString());
                             } else {
-                                JOptionPane.showMessageDialog(this, "Khong tim thay ID ve!");
+                                JOptionPane.showMessageDialog(this, "Không tìm thấy ID vé!");
                             }
                         }
                     }
@@ -414,7 +423,7 @@ public final class NhanVienUI extends JFrame {
             }
         });
         vb3.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhap ID ve muon xoa: ");
+            String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn xóa: ");
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
                     String sql = "Delete from Ticket where IDTicket = ?";
@@ -422,10 +431,10 @@ public final class NhanVienUI extends JFrame {
                         stmt.setInt(1, Integer.parseInt(key));
                         int rowsAffected = stmt.executeUpdate();
                         if (rowsAffected > 0) {
-                            JOptionPane.showMessageDialog(this, "Xoa thanh cong!");
+                            JOptionPane.showMessageDialog(this, "Xóa thành công!");
                             UpdateTicketList(t3);
                         } else {
-                            JOptionPane.showMessageDialog(this, "Xoa khong thanh cong!");
+                            JOptionPane.showMessageDialog(this, "Xóa không thành công!");
                         }
                     }
                 } catch (SQLException ex) {
@@ -435,7 +444,7 @@ public final class NhanVienUI extends JFrame {
             }
         });
         vb4.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhap IDVe muon sua: ");
+            String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn sửa: ");
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
                     String sql = "Select * from Ticket where IDTicket =?";
