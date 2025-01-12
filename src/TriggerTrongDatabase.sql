@@ -12,20 +12,20 @@ BEGIN
     ON Seat.IDSeat = i.IDSeat;
 END;
 GO
--- Chuyển RoomStatus thành 'Het cho' khi đủ 25 ghế ngồi
-  CREATE TRIGGER UpdateRoomStatus
-  ON Seat
-  AFTER INSERT
-  AS
-	BEGIN
-		UPDATE Room
-		SET RoomStatus = 'Het cho'
-		FROM Room 
-		WHERE Room.IDRoom IN 
-		(SELECT Seat.IDRoom
-		FROM Seat
-		WHERE Seat.SeatStatus = 'Booked'
-		GROUP BY Seat.IDRoom
-		HAVING COUNT(IDRoom) = 25);
-	END;
+-- Cập nhật RoomStatus thành 'Het cho' khi chỗ ngồi >= 25 và 'Con trong' khi ngược lại
+CREATE TRIGGER UpdateRoomStatus
+ON Seat
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    UPDATE Room
+    SET RoomStatus = CASE
+        WHEN (SELECT COUNT(*) 
+              FROM Seat 
+              WHERE Seat.IDRoom = Room.IDRoom AND Seat.SeatStatus = 'Booked') >= 25 
+        THEN 'Het cho'
+        ELSE 'Con trong'
+    END
+    FROM Room;
+END;
 GO
