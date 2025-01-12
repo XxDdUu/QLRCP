@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
+import dao.DatabaseOperation;
 import model.ThanhVien;
 
 public class LatMatInfo extends JFrame {
@@ -100,11 +101,8 @@ public class LatMatInfo extends JFrame {
 		setVisible(true);
 	}
 	private String getMovieID(String Title, String Director) {
-		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-        String dbUsername = "sa";
-        String dbPassword = "duy15122006";
         String query = "  SELECT IDMovie from Movie WHERE Title = ? AND Director = ?";
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        try (Connection connection = DatabaseOperation.connectToDataBase();
         		PreparedStatement preparedStatement = connection.prepareStatement(query);
         		){
         		preparedStatement.setString(1, Title);

@@ -23,6 +23,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.Icon;
+
+import dao.DatabaseOperation;
 import model.Phim;
 import model.ThanhVien;
 public class ArcaneInfo extends JFrame {
@@ -117,12 +119,9 @@ public class ArcaneInfo extends JFrame {
 		return new ImageIcon(originalIcon1.getImage().getScaledInstance(imageWidth1, imageHeight1, java.awt.Image.SCALE_SMOOTH));
 	}
 	private String getMovieID(String Title, String Director) {
-		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-        String dbUsername = "sa";
-        String dbPassword = "duy15122006";
         String query = "  SELECT IDMovie from Movie WHERE Title = ? AND Director = ?";
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
-        		PreparedStatement preparedStatement = connection.prepareStatement(query);
+        try (Connection connection = DatabaseOperation.connectToDataBase();
+			 PreparedStatement preparedStatement = connection.prepareStatement(query);
         		){
         		preparedStatement.setString(1, Title);
         		preparedStatement.setString(2, Director);

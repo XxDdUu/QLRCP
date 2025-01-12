@@ -2,6 +2,8 @@
 package ui;
 
 import java.awt.EventQueue;
+
+import dao.DatabaseOperation;
 import model.ThanhVien;
 import ui.Login;
 import javax.swing.JFrame;
@@ -103,12 +105,9 @@ public class AvengerInfo extends JFrame {
 		setVisible(true);
 	}
 	private String getMovieID(String Title, String Director) {
-		String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-        String dbUsername = "sa";
-        String dbPassword = "duy15122006";
         String query = "  SELECT IDMovie from Movie WHERE Title = ? AND Director = ?";
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
-        		PreparedStatement preparedStatement = connection.prepareStatement(query);
+        try (Connection connection = DatabaseOperation.connectToDataBase();
+			 PreparedStatement preparedStatement = connection.prepareStatement(query);
         		){
         		preparedStatement.setString(1, Title);
         		preparedStatement.setString(2, Director);
