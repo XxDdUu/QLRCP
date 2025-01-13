@@ -179,7 +179,7 @@ public class MovieTicketBooking extends JFrame {
 	}
     private List<String> fetchBookedSeatsFromDatabase(String IDRoom){
     	List<String> bookedSeats = new ArrayList<>();
-        String query = "SELECT SeatName From Seat Where Status = 'Booked' AND IDRoom = ?";
+        String query = "SELECT SeatName From Seat Where SeatStatus = 'Booked' AND IDRoom = ?";
         try (Connection connection = DatabaseOperation.connectToDataBase();
         	 PreparedStatement preparedStatement = connection.prepareStatement(query);
         		){
