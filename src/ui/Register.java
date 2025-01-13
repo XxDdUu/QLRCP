@@ -20,17 +20,6 @@ public class Register extends JFrame {
     private JPasswordField passwordField;
     private JComboBox<String> cbType;
     
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                Register frame = new Register();
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     public Register() {
 
         setTitle("Register");
