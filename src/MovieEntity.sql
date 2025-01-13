@@ -66,7 +66,7 @@ create table Seat (
 IDSeat     		 int auto_increment,
 IDRoom     		 int not null,
 SeatName      varchar(50) not null,
-Status      	 enum('Available', 'Booked', 'Broken') default 'Available',
+SeatStatus      	 enum('Available', 'Booked', 'Broken') default 'Available',
 create_at  		 timestamp default CURRENT_TIMESTAMP,
 update_at 		 timestamp default current_timestamp on update current_timestamp,
 constraint pk_Seat primary key (IDSeat)
