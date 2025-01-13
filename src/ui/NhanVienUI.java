@@ -397,20 +397,21 @@ public final class NhanVienUI extends JFrame {
             String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn tìm" );
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
-                    String sql = "Select * from Ticket where IDTicket = ?;";
+                    String sql = "Select * from Ticket INNER JOIN Customer ON Ticket.IDCustomer = Customer.IDCustomer INNER JOIN Movie ON Movie.IDMovie = Ticket.IDMovie INNER JOIN Seat ON Seat.IDSeat = Ticket.IDSeat INNER JOIN Room ON Room.IDRoom = Ticket.IDRoom WHERE IDTicket = ?";
                     try (PreparedStatement stmt = connection.prepareStatement(sql)){
                         stmt.setInt(1, Integer.parseInt(key));
                         try (ResultSet rs = stmt.executeQuery()){
                             if (rs.next()) {
-                                StringBuilder result = new StringBuilder("Thông tin vé: \n");
-                                result.append("ID vé: ").append(rs.getInt("IDTicket")).append("\n")
-                                        .append("ID phim: ").append(rs.getInt("IDMovie")).append("\n")
-                                        .append("ID phòng: ").append(rs.getInt("IDRoom")).append("\n")
-                                        .append("ID chỗ ngồi: ").append(rs.getInt("IDSeat")).append("\n")
-                                        .append("ID khách hàng: ").append(rs.getInt("IDCustomer")).append("\n")
-                                        .append("Ngày đặt: ").append(rs.getDate("BookDate")).append("\n")
-                                        .append("Trạng thái: ").append(rs.getString("TicketStatus")).append("\n")
-                                        .append("Giá: ").append(rs.getInt("Price")).append(" đ\n");
+                            	StringBuilder result = new StringBuilder("Thông tin vé: \n");
+                            	result.append(String.format("ID vé: %d\n", rs.getInt("IDTicket")))
+                            	      .append(String.format("ID phim: %-18d Tên phim: %s\n", rs.getInt("IDMovie"), rs.getString("Title")))
+                            	      .append(String.format("ID phòng: %-17d Tên phòng: %s\n", rs.getInt("IDRoom"), rs.getString("RoomName")))
+                            	      .append(String.format("ID chỗ ngồi: %-11d Tên chỗ ngồi: %s\n", rs.getInt("IDSeat"), rs.getString("SeatName")))
+                            	      .append(String.format("ID khách hàng: %-7d Tên khách hàng: %s\n", rs.getInt("IDCustomer"), rs.getString("CustomerName")))
+                            	      .append(String.format("Ngày đặt: %s\n", rs.getDate("BookDate")))
+                            	      .append(String.format("Trạng thái: %s\n", rs.getString("TicketStatus")))
+                            	      .append(String.format("Giá: %,d đ\n", rs.getInt("Price")));
+
                                 JOptionPane.showMessageDialog(this, result.toString());
                             } else {
                                 JOptionPane.showMessageDialog(this, "Không tìm thấy ID vé!");
