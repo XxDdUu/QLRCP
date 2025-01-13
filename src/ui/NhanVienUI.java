@@ -120,14 +120,24 @@ public final class NhanVienUI extends JFrame {
         JPanel p1= new JPanel();
         p1.setBackground(new Color(0, 255, 128));
         p1.setLayout(new GridLayout(1,3));
-        JButton b1= new JButton("Khách hàng");
-        b1.setBackground(new Color(255, 255, 128));
-        b1.setForeground(new Color(0, 0, 0));
-        JButton b2= new JButton("Phim");
-        b2.setBackground(new Color(255, 255, 128));
-        JButton b7= new JButton("Vé");
-        b7.setBackground(new Color(255, 255, 128));
-        p1.add(b1); p1.add(b2); p1.add(b7);
+
+        JButton KhachHangButton= new JButton("Khách hàng");
+        KhachHangButton.setBackground(new Color(255, 255, 128));
+        KhachHangButton.setForeground(new Color(0, 0, 0));
+
+        JButton PhimButton= new JButton("Phim");
+        PhimButton.setBackground(new Color(255, 255, 128));
+
+        JButton VeButton= new JButton("Vé");
+        VeButton.setBackground(new Color(255, 255, 128));
+
+        JButton ExitButton = new JButton("Đăng xuất");
+        ExitButton.setBackground(new Color(255, 255, 128));
+        p1.add(KhachHangButton);
+        p1.add(PhimButton);
+        p1.add(VeButton);
+        p1.add(ExitButton);
+
         getContentPane().add(p1, BorderLayout.NORTH);
         JPanel ButtonPanelLayout = new JPanel();
         ButtonPanelLayout.setLayout(new CardLayout());
@@ -149,36 +159,35 @@ public final class NhanVienUI extends JFrame {
         ButtonPanelLayout.add(TicketButtonPanel);
         TicketButtonPanel.setVisible(false);
         ButtonPanel.setLayout(new GridLayout(2, 4));
-        JButton b3 = new JButton("Thêm phim");
-        b3.setBackground(new Color(192, 192, 192));
-        JButton b4 = new JButton("Tìm phim");
-        b4.setBackground(new Color(192, 192, 192));
-        JButton b5 = new JButton("Xoá phim");
-        b5.setBackground(new Color(192, 192, 192));
-        JButton b6 = new JButton("Sửa phim");
-        b6.setBackground(new Color(192, 192, 192));
-        ButtonPanel.add(b3);
-        ButtonPanel.add(b4);
-        ButtonPanel.add(b5);
-        ButtonPanel.add(b6);
+        JButton b1 = new JButton("Tìm phim");
+        b1.setBackground(new Color(192, 192, 192));
+        JButton b2 = new JButton("Sửa phim");
+        b2.setBackground(new Color(192, 192, 192));
+        ButtonPanel.add(b1);
+        ButtonPanel.add(b2);
         ButtonPanelLayout.add(ButtonPanel);
         getContentPane().add(ButtonPanelLayout, BorderLayout.SOUTH);
         ButtonPanelLayout.setVisible(false);
         ButtonPanel.setVisible(false);
+
         Object[][] vedatatab = loadTicketDataFromDatabase();
+        String[] cotve = {"ID vé", "ID phim", "ID phòng", "ID chỗ ngồi", "ID khách hàng", "Ngày đặt", "Trạng thái vé", "Giá"};
         Object[][] khdatatab = loadCustomerFromDatabase();
         String[] cotkh= {"ID", "Tên", "Số điện thoại", "Loại khách"};
         Object[][] phimdatatab= loadMovieDataFromDatabase();
         String[] cotph = {"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim",  "Đạo diễn", "Ngày phát hành", "Miêu tả"};
-        String[] cotve = {"ID vé", "ID phim", "ID phòng", "ID chỗ ngồi", "ID khách hàng", "Ngày đặt", "Trạng thái vé", "Giá"};
+
         DefaultTableModel tblmodel1= new DefaultTableModel(khdatatab, cotkh);
         DefaultTableModel tblmodel2= new DefaultTableModel(phimdatatab, cotph);
         DefaultTableModel tblmodel3= new DefaultTableModel(vedatatab, cotve);
+        DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
+
         JTable t1= new JTable(tblmodel1);
         JTable t2= new JTable(tblmodel2);
         JTable t3= new JTable(tblmodel3);
-        DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
         dtcr.setHorizontalAlignment(JLabel.CENTER);
+
+
         for (int i=0; i<t1.getColumnCount(); i++) {
             t1.getColumnModel().getColumn(i).setCellRenderer(dtcr);
         }
@@ -188,14 +197,17 @@ public final class NhanVienUI extends JFrame {
         for (int i=0; i<t3.getColumnCount(); i++) {
             t3.getColumnModel().getColumn(i).setCellRenderer(dtcr);
         }
+
         JScrollPane sp1= new JScrollPane(t1);
         JScrollPane sp2= new JScrollPane(t2);
         JScrollPane sp3= new JScrollPane(t3);
+
         JPanel p2= new JPanel();
         p2.setLayout(new CardLayout());
         p2.add(sp1); p2.add(sp2); p2.add(sp3);
         getContentPane().add(p2, BorderLayout.CENTER);
-        b1.addActionListener((ActionEvent e)-> {
+
+        KhachHangButton.addActionListener((ActionEvent e)-> {
             sp1.setVisible(true);
             sp2.setVisible(false);
             sp3.setVisible(false);
@@ -204,8 +216,7 @@ public final class NhanVienUI extends JFrame {
             ButtonPanelLayout.setVisible(false);
         });
 
-
-        b2.addActionListener((ActionEvent e)-> {
+        PhimButton.addActionListener((ActionEvent e)-> {
             sp1.setVisible(false);
             sp2.setVisible(true);
             sp3.setVisible(false);
@@ -214,50 +225,16 @@ public final class NhanVienUI extends JFrame {
             ButtonPanelLayout.setVisible(true);
         });
 
-        b3.addActionListener((e) -> {
-            JTextField title = new JTextField();
-            JTextField genre = new JTextField();
-            JTextField duration = new JTextField();
-            SpinnerDateModel datamodel = new SpinnerDateModel();
-            JSpinner release_date = new JSpinner(datamodel);
-            release_date.setEditor(new JSpinner.DateEditor(release_date, "yyyy-MM-dd"));
-            JTextField director = new JTextField();
-            JTextArea description = new JTextArea();
-
-            Object[] inputFields = {
-                    "Tên Phim: ", title,
-                    "Thể Loại: ", genre,
-                    "Thời Lượng: ", duration,
-                    "Ngày Chiếu Phim: ", release_date,
-                    "Đạo Diễn: ", director,
-                    "Mô Tả: ", new JScrollPane(description)
-            };
-
-            int OK_option =JOptionPane.showConfirmDialog(this, inputFields, "Thêm phim mới", JOptionPane.OK_CANCEL_OPTION);
-
-            if (OK_option == JOptionPane.OK_OPTION) {
-                try (Connection connection = DatabaseOperation.connectToDataBase()) {
-                    String sql = "Insert into Movie(Title, Genre, Duration, Director, release_date, Moviedescrip) values (?, ?, ?, ?, ?, ?);";
-                    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    	stmt.setString(1, title.getText());
-                        stmt.setString(2, genre.getText());
-                        stmt.setInt(3, Integer.parseInt(duration.getText()));
-                        stmt.setString(4, director.getText());
-                        java.util.Date date = (java.util.Date) release_date.getValue();
-                        stmt.setDate(5, new java.sql.Date(date.getTime()));
-                        stmt.setString(6, description.getText());
-                        stmt.executeUpdate();
-                        JOptionPane.showMessageDialog(this, "Thêm phim thành công");
-                        UpdateMovieList(t2);
-                    }
-                } catch (SQLException | NumberFormatException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Lỗi khi thêm phim mới!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+        VeButton.addActionListener(e -> {
+            sp3.setVisible(true);
+            sp2.setVisible(false);
+            sp1.setVisible(false);
+            ButtonPanel.setVisible(false);
+            ButtonPanelLayout.setVisible(true);
+            TicketButtonPanel.setVisible(true);
         });
 
-        b4.addActionListener(e -> {
+        b1.addActionListener(e -> {
             String key = JOptionPane.showInputDialog(this, "Nhập tên phim muốn tìm: ");
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()) {
@@ -287,30 +264,8 @@ public final class NhanVienUI extends JFrame {
                 }
             }
         });
-        b5.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhập ID phim muốn xoá: ");
-            if (key != null && !key.trim().isEmpty()) {
-                try (Connection connection = DatabaseOperation.connectToDataBase()){
-                    String sql = "Delete from Movie where IDMovie = ?";
-                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
-                        stmt.setInt(1, Integer.parseInt(key));
-                        int RowsAffected = stmt.executeUpdate();
-                        if (RowsAffected > 0) {
-                            JOptionPane.showMessageDialog(this, "Xoá phim thành công!");
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Lỗi không tìm thấy phim để xoá!");
-                        }
 
-                        UpdateMovieList(t2);
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Lỗi khi xóa phim!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        b6.addActionListener(e -> {
+        b2.addActionListener(e -> {
             String key = JOptionPane.showInputDialog(this, "Nhập ID phim muốn sửa: ");
             if (key != null && !key.trim().isEmpty()) {
                 try (Connection connection = DatabaseOperation.connectToDataBase()){
@@ -383,15 +338,7 @@ public final class NhanVienUI extends JFrame {
                 }
             }
         });
-        
-        b7.addActionListener(e -> {
-        	sp3.setVisible(true);
-        	sp2.setVisible(false);
-        	sp1.setVisible(false);
-        	ButtonPanel.setVisible(false);
-        	ButtonPanelLayout.setVisible(true);
-        	TicketButtonPanel.setVisible(true);
-        });
+
 
         vb2.addActionListener(e -> {
             String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn tìm" );
@@ -511,6 +458,15 @@ public final class NhanVienUI extends JFrame {
                     JOptionPane.showMessageDialog(this, "Loi khi sua ve", "Loi", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        });
+
+        ExitButton.addActionListener(e -> {
+            int option = JOptionPane.showConfirmDialog(this, "Bạn chắc chắn muốn thoát chứ?", "Thông báo", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                dispose();
+                new Login().setVisible(true);
+            }
+
         });
     }
     public static void main(String[] args) {
