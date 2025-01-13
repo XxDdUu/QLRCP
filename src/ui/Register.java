@@ -154,11 +154,7 @@ public class Register extends JFrame {
             insertQuery = "INSERT INTO Customer (CustomerName , CustomerPhoneNumber, CustomerPass, CustomerType) VALUES (?, ?, ?, ?)";
         }
 
-        String dbUrl = "jdbc:sqlserver://ADMIN\\SQLEXPRESS:1433;databaseName=QLRCP;encrypt=true;trustServerCertificate=true;";
-        String dbUsername = "sa";
-        String dbPassword = "duy15122006";
-
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        try (Connection connection = DatabaseOperation.connectToDataBase();
              PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
 
             preparedStatement.setString(1, username);
