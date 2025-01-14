@@ -7,7 +7,6 @@ alter table Schedule add constraint fk_Schedule_Room foreign key(IDRoom) referen
 -- khoa ngoai cua table Ticket
 alter table Ticket add constraint fk_Seat_Ticket foreign key (IDSeat) references Seat(IDSeat) on delete cascade on update cascade;
 alter table Ticket add constraint fk_Custom_Ticket foreign key (IDCustomer) references Customer(IDCustomer) on delete cascade;
-alter table Ticket add constraint fk_Staff_Ticket foreign key (IDStaff) references Staff(IDStaff) on delete cascade on update cascade;
 alter table Ticket add constraint fk_Room_Ticket foreign key (IDRoom) references Room(IDRoom) on delete no action
 alter table Ticket add constraint fk_Movie_Ticket foreign key (IDMovie) references Movie(IDMovie) on delete cascade on update cascade;
 
