@@ -1,8 +1,7 @@
 use Movie;
 
 
--- khoa ngoai cua table Schedule
-alter table Schedule add constraint fk_Schedule_Room foreign key(IDRoom) references Room(IDRoom) on delete cascade on update cascade;
+
 
 -- khoa ngoai cua table Ticket
 alter table Ticket add constraint fk_Seat_Ticket foreign key (IDSeat) references Seat(IDSeat) on delete cascade on update cascade;
@@ -21,7 +20,7 @@ select * from Customer;
 insert into Staff(Staff_Name,Staff_Pass ) values ('@adminBach', 'Bachnguyen54'), ('@adminDuy', 'Duy15122006'), ('@adminTuat', 'Tuat12345'), ('@adminThong', 'Thong12345');
 
 
-INSERT INTO Movie (Title, Genre, Duration, Director,release_date, Moviedescrip )VALUES 
+INSERT INTO Movie (Title, Genre, Duration, Director,release_date, Moviedescrip ) VALUES 
 	('Arcane', N'HĐ', 171, 'Pascal Charrue và Arnaud Delord', '2021/11/06',N' Arcane là loạt phim hoạt hình lấy
 bối cảnh vũ trụ League of Legends, kể về 
 cuộc xung đột giữa hai thành phố Piltover 
@@ -42,7 +41,7 @@ người con khi trưởng thành đều có cuộc
 sống riêng và thậm chí đi làm ăn và sinh 
 sống xa nhà mẹ. Một ngày nọ, bà Hai bị
  tai nạn và bó bột chân, buộc năm người 
-con phải tìm cách về chăm lo cho mẹ.' )
+con phải tìm cách về chăm lo cho mẹ.' );
 
 -- insert du lieu mau cho table Room
 insert into Room(RoomName, capacity, Status) values ('RA', '25', default), ('RB', '25', default), ('RC', '25', default);
