@@ -144,7 +144,7 @@ public final class NhanVienUI extends JFrame {
         VeButton.setBackground(new Color(255, 255, 128));
 
         JButton ExitButton = new JButton("Đăng xuất");
-        ExitButton.setBackground(new Color(255, 255, 128));
+        ExitButton.setBackground(new Color(255, 66, 66));
         p1.add(KhachHangButton);
         p1.add(PhimButton);
         p1.add(VeButton);
@@ -390,7 +390,6 @@ public final class NhanVienUI extends JFrame {
                                         stmt2.setString(6, ticketStatus.getText());
                                         stmt2.setDouble(7, Double.parseDouble(price.getText()));
                                         stmt2.setInt(8, Integer.parseInt(key));
-
                                         int rowsAffected = stmt2.executeUpdate();
                                         if (rowsAffected > 0) {
                                             JOptionPane.showMessageDialog(this, "Sửa vé thành công!");
@@ -443,7 +442,7 @@ public final class NhanVienUI extends JFrame {
                                  frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                                  frame.setLocationRelativeTo(this);
                                  frame.setSize(325, 250);
-                                 frame.setLayout(null);
+                                 frame.getContentPane().setLayout(null);
                                  
                                  JLabel idCustomerLabel = new JLabel("ID khách hàng:");
                                  idCustomerLabel.setBounds(10, 10, 150, 20);
@@ -467,15 +466,15 @@ public final class NhanVienUI extends JFrame {
                                  JButton ButtonXacNhan = new JButton("Thay đổi");
                                  ButtonXacNhan.setBounds(100, 170, 100, 20);
                                  
-                                 frame.add(ButtonXacNhan);
-                                 frame.add(idCustomerLabel);
-                                 frame.add(idCustomer);
-                                 frame.add(customerNameLabel);
-                                 frame.add(CustomerName);
-                                 frame.add(customerPhoneNumberLabel);
-                                 frame.add(customerPhoneNumber);
-                                 frame.add(customerTypeLabel);
-                                 frame.add(customerTypeComboBox);
+                                 frame.getContentPane().add(ButtonXacNhan);
+                                 frame.getContentPane().add(idCustomerLabel);
+                                 frame.getContentPane().add(idCustomer);
+                                 frame.getContentPane().add(customerNameLabel);
+                                 frame.getContentPane().add(CustomerName);
+                                 frame.getContentPane().add(customerPhoneNumberLabel);
+                                 frame.getContentPane().add(customerPhoneNumber);
+                                 frame.getContentPane().add(customerTypeLabel);
+                                 frame.getContentPane().add(customerTypeComboBox);
                                  frame.setVisible(true);
                                  
                                  ButtonXacNhan.addActionListener(ex -> {
@@ -492,7 +491,6 @@ public final class NhanVienUI extends JFrame {
                                 			 if (rowAffected > 0) {
                                 				 JOptionPane.showMessageDialog(frame, "Sửa thông tin khách thành công.");
                                 				 UpdateCustomerList(t1);
-                                				 
                                                }
                                 		 } catch (SQLException sqlex) {
                                  			JOptionPane.showMessageDialog(this, "Database Error: " + sqlex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
