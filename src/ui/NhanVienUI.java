@@ -1,6 +1,7 @@
 package ui;
 import dao.DatabaseOperation;
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -112,6 +113,17 @@ public final class NhanVienUI extends JFrame {
         }
         return CustomerList.toArray(new Object[CustomerList.size()][]);
     }
+    private void UpdateCustomerList(JTable table) {
+        Object[][] khachdatatab = loadCustomerFromDatabase();
+        DefaultTableModel tblmodel2 = new DefaultTableModel(khachdatatab, new String[]{"ID", "Tên", "Số điện thoại", "Loại đối tượng"});
+        DefaultTableCellRenderer dtcr= new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
+        table.setModel(tblmodel2);
+        for (int i=0; i<table.getColumnCount(); i++) {
+        	table.getColumnModel().getColumn(i).setCellRenderer(dtcr);
+        }
+    }
+    
     public void initUI() {
         this.setSize(1000, 800);
         this.setLocationRelativeTo(null);
@@ -143,37 +155,47 @@ public final class NhanVienUI extends JFrame {
         ButtonPanelLayout.setLayout(new CardLayout());
         JPanel ButtonPanel = new JPanel();
         JPanel TicketButtonPanel = new JPanel();
+        JPanel CustomerButtonPanel = new JPanel();
+        CustomerButtonPanel.setLayout(new GridLayout(1, 1));
+        
         TicketButtonPanel.setLayout(new GridLayout(2,1));
         JPanel TicketButtonPanelSub= new JPanel();
         TicketButtonPanelSub.setLayout(new GridLayout(1,2));
+        
+        JButton TimVaSuaThongTinKhach = new JButton("Tìm và Sửa thông tin khách hàng");
+        TimVaSuaThongTinKhach.setBackground(new Color(192, 192, 192));
+        CustomerButtonPanel.add(TimVaSuaThongTinKhach);
+        ButtonPanelLayout.add(CustomerButtonPanel);
+        CustomerButtonPanel.setVisible(true);
+        
         JButton vb2 = new JButton("Tìm vé");
         vb2.setBackground(new Color(192, 192, 192));
         JButton vb3 = new JButton("Xoá vé");
         vb3.setBackground(new Color(192, 192, 192));
         JButton vb4 = new JButton("Sửa vé");
         vb4.setBackground(new Color(192, 192, 192));
+        
         TicketButtonPanelSub.add(vb2);
         TicketButtonPanelSub.add(vb3);
         TicketButtonPanel.add(TicketButtonPanelSub);
+        
         TicketButtonPanel.add(vb4);
         ButtonPanelLayout.add(TicketButtonPanel);
-        TicketButtonPanel.setVisible(false);
-        ButtonPanel.setLayout(new GridLayout(2, 4));
+        
+        ButtonPanel.setLayout(new GridLayout(1, 1));
         JButton b1 = new JButton("Tìm phim");
         b1.setBackground(new Color(192, 192, 192));
-        JButton b2 = new JButton("Sửa phim");
-        b2.setBackground(new Color(192, 192, 192));
         ButtonPanel.add(b1);
-        ButtonPanel.add(b2);
         ButtonPanelLayout.add(ButtonPanel);
         getContentPane().add(ButtonPanelLayout, BorderLayout.SOUTH);
-        ButtonPanelLayout.setVisible(false);
+        ButtonPanelLayout.setVisible(true);
         ButtonPanel.setVisible(false);
+        TicketButtonPanel.setVisible(false);
 
         Object[][] vedatatab = loadTicketDataFromDatabase();
         String[] cotve = {"ID vé", "ID phim", "ID phòng", "ID chỗ ngồi", "ID khách hàng", "Ngày đặt", "Trạng thái vé", "Giá"};
         Object[][] khdatatab = loadCustomerFromDatabase();
-        String[] cotkh= {"ID", "Tên", "Số điện thoại", "Loại khách"};
+        String[] cotkh= {"ID", "Tên", "Số điện thoại", "Loại đối tượng"};
         Object[][] phimdatatab= loadMovieDataFromDatabase();
         String[] cotph = {"ID", "Tiêu đề", "Thể loại phim", "Thời lượng phim",  "Đạo diễn", "Ngày phát hành", "Miêu tả"};
 
@@ -211,15 +233,17 @@ public final class NhanVienUI extends JFrame {
             sp1.setVisible(true);
             sp2.setVisible(false);
             sp3.setVisible(false);
+            CustomerButtonPanel.setVisible(true);
             ButtonPanel.setVisible(false);
             TicketButtonPanel.setVisible(false);
-            ButtonPanelLayout.setVisible(false);
+            ButtonPanelLayout.setVisible(true);
         });
 
         PhimButton.addActionListener((ActionEvent e)-> {
             sp1.setVisible(false);
             sp2.setVisible(true);
             sp3.setVisible(false);
+            CustomerButtonPanel.setVisible(false);
             ButtonPanel.setVisible(true);
             TicketButtonPanel.setVisible(false);
             ButtonPanelLayout.setVisible(true);
@@ -229,6 +253,7 @@ public final class NhanVienUI extends JFrame {
             sp3.setVisible(true);
             sp2.setVisible(false);
             sp1.setVisible(false);
+            CustomerButtonPanel.setVisible(false);
             ButtonPanel.setVisible(false);
             ButtonPanelLayout.setVisible(true);
             TicketButtonPanel.setVisible(true);
@@ -264,81 +289,6 @@ public final class NhanVienUI extends JFrame {
                 }
             }
         });
-
-        b2.addActionListener(e -> {
-            String key = JOptionPane.showInputDialog(this, "Nhập ID phim muốn sửa: ");
-            if (key != null && !key.trim().isEmpty()) {
-                try (Connection connection = DatabaseOperation.connectToDataBase()){
-                    String sql = "Select * from Movie where IDMovie = ?";
-                    try (PreparedStatement stmt = connection.prepareStatement(sql)){
-                        stmt.setString(1, key);
-                        try (ResultSet rs = stmt.executeQuery()){
-                            if (rs.next()) {
-                                String currentTitle = rs.getString("Title");
-                                String currentGenre = rs.getString("Genre");
-                                int currentDuration = rs.getInt("Duration");
-                                String currentDirector = rs.getString("Director");
-                                java.sql.Date currentRelease_date = rs.getDate("release_date");
-                                String currentDescription = rs.getString("Moviedescrip");
-
-                                JTextField title = new JTextField(currentTitle);
-                                JTextField genre = new JTextField(currentGenre);
-                                JTextField duration = new JTextField(currentDuration);
-                                JTextField director = new JTextField(currentDirector);
-                                SpinnerDateModel datamodel = new SpinnerDateModel(currentRelease_date, null, null, java.util.Calendar.DAY_OF_MONTH);
-                                JSpinner release_date = new JSpinner(datamodel);
-                                release_date.setEditor(new JSpinner.DateEditor(release_date, "yyyy-MM-dd"));
-                                JTextField description = new JTextField(currentDescription);
-
-
-                                Object[] inputFields = {
-                                        "Tên Phim: ", title,
-                                        "Thể Loại: ", genre,
-                                        "Thời Lượng: ", duration,
-                                        "Ngày Chiếu Phim: ", release_date,
-                                        "Đạo Diễn: ", director,
-                                        "Mô Tả: ", new JScrollPane(description)
-                                };
-
-                                int option = JOptionPane.showConfirmDialog(this, inputFields, "Sửa thông tin phim", JOptionPane.OK_CANCEL_OPTION);
-                                if (option == JOptionPane.OK_OPTION) {
-                                    String newTitle = title.getText().trim().isEmpty() ? currentTitle : title.getText();
-                                    String newGenre = genre.getText().trim().isEmpty() ? currentGenre : genre.getText();
-                                    int newDuration = duration.getText().trim().isEmpty() ? currentDuration : Integer.parseInt(duration.getText());
-                                    java.util.Date newRelease_date = (java.util.Date) release_date.getValue();
-                                    String newDirector = director.getText().trim().isEmpty() ? currentDirector : director.getText();
-                                    String newDescription = description.getText().trim().isEmpty() ? currentDescription : description.getText();
-
-                                    String updatesql = "Update Movie Set Title = ?, Genre = ?, Duration = ?, Director = ?, release_date = ?, Moviedescrip = ? where IDMovie = ?";
-                                    try (PreparedStatement stmt2 = connection.prepareStatement(updatesql)){
-                                        stmt2.setString(1, newTitle);
-                                        stmt2.setString(2, newGenre);
-                                        stmt2.setInt(3, newDuration);
-                                        stmt2.setString(4, newDirector);
-                                        stmt2.setDate(5, new java.sql.Date(newRelease_date.getTime()));
-                                        stmt2.setString(6, newDescription);
-                                        stmt2.setInt(7, Integer.parseInt(key));
-                                        int RowsAffected = stmt2.executeUpdate();
-                                        if (RowsAffected > 0 ) {
-                                            JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công!");
-                                            UpdateMovieList(t2);
-                                        } else {
-                                            JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật thông tin!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                                        }
-                                    }
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(this, "Không tìm thấy ID muốn cập nhật!");
-                            }
-                        }
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Lỗi khi sửa phim!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
 
         vb2.addActionListener(e -> {
             String key = JOptionPane.showInputDialog(this, "Nhập ID vé muốn tìm" );
@@ -464,16 +414,101 @@ public final class NhanVienUI extends JFrame {
             int option = JOptionPane.showConfirmDialog(this, "Bạn chắc chắn muốn thoát chứ?", "Thông báo", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
                 dispose();
-                new Login().setVisible(true);
+                new Login();
             }
 
         });
-    }
-    public static void main(String[] args) {
-        try{
-            (new NhanVienUI()).setVisible(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        TimVaSuaThongTinKhach.addActionListener(e -> {
+        	String key = JOptionPane.showInputDialog(this, "Nhập ID khách hàng muốn tìm & sửa: ");
+        	if (key != null && !key.trim().isEmpty()) {
+        		String query = "SELECT * FROM CUSTOMER WHERE IDCustomer = ?";
+        		try (Connection connection = DatabaseOperation.connectToDataBase();
+        			 PreparedStatement preparedStatement = connection.prepareStatement(query)){
+        				preparedStatement.setInt(1, Integer.parseInt(key));
+        				ResultSet resultSet = preparedStatement.executeQuery();
+        				if (resultSet.next()) {
+        						 int currentCustomerID = resultSet.getInt("IDCustomer");
+        						 String currentCustomerName = resultSet.getString("CustomerName");
+        						 String currentCustomerPhoneNumber = resultSet.getString("CustomerPhoneNumber");
+        						 String currentCustomerType = resultSet.getString("CustomerType");
+        					
+        					
+                                 JTextField idCustomer = new JTextField(String.valueOf(currentCustomerID));
+                                 idCustomer.setEditable(false);
+                                 JTextField CustomerName = new JTextField(String.valueOf(currentCustomerName));
+                                 JTextField customerPhoneNumber = new JTextField(String.valueOf(currentCustomerPhoneNumber));
+                                 customerPhoneNumber.setEditable(false);
+                                 
+                                 JFrame frame = new JFrame("Thông tin khách hàng");
+                                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                 frame.setLocationRelativeTo(this);
+                                 frame.setSize(325, 250);
+                                 frame.setLayout(null);
+                                 
+                                 JLabel idCustomerLabel = new JLabel("ID khách hàng:");
+                                 idCustomerLabel.setBounds(10, 10, 150, 20);
+                                 idCustomer.setBounds(150, 10, 150, 20);
+
+                                 JLabel customerNameLabel = new JLabel("Tên khách hàng:");
+                                 customerNameLabel.setBounds(10, 50, 150, 20);
+                                 CustomerName.setBounds(150, 50, 150, 20);
+
+                                 JLabel customerPhoneNumberLabel = new JLabel("Số điện thoại:");
+                                 customerPhoneNumberLabel.setBounds(10, 90, 150, 20);
+                                 customerPhoneNumber.setBounds(150, 90, 150, 20);
+
+                                 JLabel customerTypeLabel = new JLabel("Loại khách hàng:");
+                                 customerTypeLabel.setBounds(10, 130, 150, 20);
+                                 String[] customerTypes = {"Nguoi lon", "Tre em"};
+                                 JComboBox<String> customerTypeComboBox = new JComboBox<>(customerTypes);
+                                 customerTypeComboBox.setSelectedItem(currentCustomerType);
+                                 customerTypeComboBox.setBounds(150, 130, 150, 20);
+                                 
+                                 JButton ButtonXacNhan = new JButton("Thay đổi");
+                                 ButtonXacNhan.setBounds(100, 170, 100, 20);
+                                 
+                                 frame.add(ButtonXacNhan);
+                                 frame.add(idCustomerLabel);
+                                 frame.add(idCustomer);
+                                 frame.add(customerNameLabel);
+                                 frame.add(CustomerName);
+                                 frame.add(customerPhoneNumberLabel);
+                                 frame.add(customerPhoneNumber);
+                                 frame.add(customerTypeLabel);
+                                 frame.add(customerTypeComboBox);
+                                 frame.setVisible(true);
+                                 
+                                 ButtonXacNhan.addActionListener(ex -> {
+                                	 int result = JOptionPane.showConfirmDialog(frame, "Xác nhận sửa thông tin?", "xác nhận", JOptionPane.OK_CANCEL_OPTION);
+                                	 if (result == JOptionPane.OK_OPTION) {
+                                		 String UpdateSql = "UPDATE Customer SET CustomerName = ?, CustomerType = ? WHERE IDCustomer = ?";
+                                		 try (Connection connectionToUpdate = DatabaseOperation.connectToDataBase();
+                                				 PreparedStatement preparedStatementUpdate = connectionToUpdate.prepareStatement(UpdateSql)){
+                                			 preparedStatementUpdate.setString(1, CustomerName.getText());
+                                			 preparedStatementUpdate.setString(2, (String)customerTypeComboBox.getSelectedItem());
+                                			 preparedStatementUpdate.setInt(3, currentCustomerID);
+                                			 
+                                			 int rowAffected = preparedStatementUpdate.executeUpdate();
+                                			 if (rowAffected > 0) {
+                                				 JOptionPane.showMessageDialog(frame, "Sửa thông tin khách thành công.");
+                                				 UpdateCustomerList(t1);
+                                				 
+                                               }
+                                		 } catch (SQLException sqlex) {
+                                 			JOptionPane.showMessageDialog(this, "Database Error: " + sqlex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+                                		 }
+                                		 
+                                	 }
+                                 });
+        				}
+        				else {
+        					JOptionPane.showMessageDialog(this, "Không tìm thấy ID khách.", "Error", JOptionPane.ERROR_MESSAGE);
+        				}
+        		} catch (SQLException sqlex) {
+        			JOptionPane.showMessageDialog(this, "Database Error: " + sqlex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        		}
+        	}
+        });
     }
 }
