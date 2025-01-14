@@ -41,7 +41,7 @@ create table Room (
 IDRoom				int auto_increment,
 RoomName			nvarchar(100) not null,
 capacity			int not null,	-- Suc chua cua phong
-Status 				enum('Con trong', 'Het cho') default 'Con trong',
+RoomStatus 				enum('Con trong', 'Het cho') default 'Con trong',
 create_at timestamp default CURRENT_TIMESTAMP,
 update_at timestamp default current_timestamp on update current_timestamp,
 constraint pk_Room primary key (IDRoom)
